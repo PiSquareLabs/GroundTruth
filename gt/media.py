@@ -14,7 +14,7 @@ from gt import config, db
 PRESETS = {
     "thumb": "c_fill,g_auto,w_400,h_300/q_auto/f_auto",
     "display": "c_limit,w_1200/q_auto/f_auto",
-    "compare": "c_fill,g_auto,w_1000,h_750/q_auto/f_auto",
+    "compare": "c_fill,g_auto,w_1000,h_750/q_auto/f_jpg",  # slider fetches server-side
     "report": "c_fill,g_auto,w_640,h_480/q_auto/f_jpg",
 }
 FACE_BLUR = "e_blur_faces:800"
