@@ -49,3 +49,9 @@ def test_suggest_orders_by_time_and_skips_other_activities():
     out = suggest([later, earlier, other], min_score=0.5)
     assert len(out) == 1
     assert out[0]["before_id"] == "earlier" and out[0]["after_id"] == "later"
+
+
+def test_suggest_never_pairs_across_projects():
+    a = asset("a", project="p1")
+    b = asset("b", t="2026-06-20T09:00:00", project="p2")
+    assert suggest([a, b], min_score=0.0) == []
