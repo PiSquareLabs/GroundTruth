@@ -29,7 +29,8 @@ if any_synthetic(assets):
     st.warning(SYNTHETIC_NOTE, icon="🧪")
 
 if not assets:
-    st.warning("No seed data loaded yet. Run `python scripts/seed_cloudinary.py` after adding images to `seed/images/`.")
+    st.warning("No seed data loaded yet. Add images to `seed/images/`, describe them in `seed/metadata.csv`, "
+               "then run `python scripts/seed_cloudinary.py`.")
 else:
     st.subheader("Projects")
     for p in projects:
