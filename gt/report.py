@@ -80,8 +80,8 @@ def template_summary(f: dict) -> str:
 
 def generate_summary(project_id: str = ALL) -> dict:
     f = facts(project_id)
-    text = ai_provider.generate_text(PROMPT.format(facts=json.dumps(f, indent=1)))
-    return {"scope": project_id, "text": text.strip(), "model": ai_provider.model_name("vision"),
+    text, used = ai_provider.generate_text(PROMPT.format(facts=json.dumps(f, indent=1)))
+    return {"scope": project_id, "text": text.strip(), "model": ai_provider.model_name(used),
             "generated_at": db.now_iso(), "facts_hash": facts_hash(f)}
 
 

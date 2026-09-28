@@ -44,7 +44,9 @@ CLOUDINARY_FOLDER = get("CLOUDINARY_FOLDER", "ground-truth")
 # --- AI provider ----------------------------------------------------------------
 AI_PROVIDER = get("AI_PROVIDER", "gemini")
 GEMINI_API_KEY = get("GEMINI_API_KEY") or get("GOOGLE_API_KEY")
-GEMINI_VISION_MODEL = get("GEMINI_VISION_MODEL", "gemini-2.5-flash")
+GEMINI_VISION_MODEL = get("GEMINI_VISION_MODEL", "gemini-3.8-flash")
+# tried in order when the primary model is overloaded (429/5xx) or unavailable to the key (404)
+GEMINI_FALLBACK_MODELS = [m.strip() for m in get("GEMINI_FALLBACK_MODELS", "gemini-3.7-flash,gemini-3.6-flash,gemini-3.5-flash-lite").split(",") if m.strip()]
 GEMINI_EMBED_MODEL = get("GEMINI_EMBED_MODEL", "gemini-embedding-001")
 
 # --- pair scoring (weights must sum to 1) ---------------------------------------

@@ -4,7 +4,7 @@ from __future__ import annotations
 import json
 import re
 
-from gt import ai_provider, db
+from gt import ai_provider, config, db
 
 ACTIVITIES = ["drain_cleaning", "tree_planting", "road_repair", "waste_clearing", "other"]
 SIGNALS = [
@@ -70,10 +70,10 @@ def embedding_text(an: dict) -> str:
 
 def analyze(image_bytes: bytes, mime_type: str = "image/jpeg") -> dict:
     """Run vision + embedding. Never raises on bad JSON: stores raw output and flags needs_review."""
-    raw = ai_provider.vision_json(image_bytes, mime_type, PROMPT, SCHEMA)
+    raw, used = ai_provider.vision_json(image_bytes, mime_type, PROMPT, SCHEMA)
     an, ok = parse(raw)
     an["raw_output"] = raw
-    an["model"] = ai_provider.model_name("vision") + " + " + ai_provider.model_name("embed")
+    an["model"] = ai_provider.model_name(used) + " + " + ai_provider.model_name(config.GEMINI_EMBED_MODEL)
     an["analyzed_at"] = db.now_iso()
     text = embedding_text(an)
     an["embedding"] = ai_provider.embed([text])[0] if ok and text else None

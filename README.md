@@ -124,7 +124,8 @@ pytest -q                   # pair scoring, JSON-parse fallback, duplicate detec
 | `CLOUDINARY_FOLDER` | `ground-truth` | Upload folder prefix |
 | `AI_PROVIDER` | `gemini` | Only `gemini` is implemented |
 | `GEMINI_API_KEY` | – | Analysis, embeddings, summaries; optional in demo (enables semantic query search) |
-| `GEMINI_VISION_MODEL` | `gemini-2.5-flash` | Captions/tags/JSON and report summary |
+| `GEMINI_VISION_MODEL` | `gemini-3.8-flash` | Captions/tags/JSON and report summary |
+| `GEMINI_FALLBACK_MODELS` | `gemini-3.7-flash,gemini-3.6-flash,gemini-3.5-flash-lite` | Tried in order if the primary model is overloaded or unavailable; the model actually used is recorded |
 | `GEMINI_EMBED_MODEL` | `gemini-embedding-001` | 768-dim embeddings |
 | `PAIR_W_LOCATION` / `PAIR_W_VISUAL` / `PAIR_W_TIME` | `0.4` / `0.4` / `0.2` | Pair score weights |
 | `LOCATION_SCALE_M` | `150` | Distance (m) at which location proximity = 0.5 |
