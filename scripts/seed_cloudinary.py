@@ -126,9 +126,10 @@ def main() -> None:
 
         config.DEMO_MODE = True
         seed.ensure_loaded()
-        data["report"] = report.generate_summary()
+        scopes = [report.ALL] + [pr["id"] for pr in projects]
+        data["report"] = {sc: report.generate_summary(sc) for sc in scopes}
         seed.write_seed(data)
-        print("Cached report summary.")
+        print(f"Cached report summaries for: {', '.join(scopes)}")
 
 
 if __name__ == "__main__":

@@ -6,6 +6,7 @@ PAGES = [
     st.Page("pages/1_Assets.py", title="Assets", icon="🗂️", url_path="assets"),
     st.Page("pages/2_Search.py", title="Search", icon="🔎", url_path="search"),
     st.Page("pages/3_Pairs.py", title="Pairs", icon="🔁", url_path="pairs"),
+    st.Page("pages/4_Report.py", title="Report", icon="📄", url_path="report"),
     st.Page("pages/5_Trace.py", title="Trace", icon="🧾", url_path="trace"),
     st.Page("pages/6_Upload.py", title="Upload", icon="⬆️", url_path="upload"),
 ]
