@@ -1,14 +1,8 @@
 [
   {
-    "id": "drain-ward-12",
-    "name": "Drain cleaning, Ward 12",
-    "description": "Volunteer drive to clear a blocked storm drain before monsoon.",
-    "location_name": "Ward 12, <city>"
-  },
-  {
-    "id": "tree-planting-lakeside",
-    "name": "Tree planting, Lakeside",
-    "description": "Native saplings planted along the lake path.",
-    "location_name": "Lakeside path, <city>"
+    "id": "drain-cleaning-ward-12",
+    "name": "Drain Cleaning, Ward 12 (synthetic)",
+    "description": "Synthetic demo project: AI-generated images of a fictional drain-cleaning drive.",
+    "location_name": "Fictional location"
   }
 ]

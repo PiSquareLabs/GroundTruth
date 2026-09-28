@@ -4,7 +4,7 @@ import streamlit.components.v1 as components
 from streamlit_image_comparison import image_comparison
 
 from gt import config, db, media, report
-from gt.ui import AI_BADGE, page_setup
+from gt.ui import AI_BADGE, SYNTHETIC_NOTE, any_synthetic, page_setup, synthetic_badge
 
 page_setup("Report", "📄")
 st.title("📄 Impact report")
@@ -16,6 +16,9 @@ if not f["image_count"]:
     st.warning("No evidence in this scope.")
     st.stop()
 assets = db.assets(None if scope == report.ALL else scope)
+
+if any_synthetic(assets):
+    st.warning(SYNTHETIC_NOTE + " This report demonstrates the reporting workflow only.", icon="🧪")
 
 c1, c2, c3 = st.columns(3)
 c1.metric("Images", f["image_count"])
@@ -54,6 +57,7 @@ if not f["confirmed_pairs"]:
 for p in f["confirmed_pairs"]:
     b, a = by_id[p["before"]["id"]], by_id[p["after"]["id"]]
     blur = bool(b.get("people_present") or a.get("people_present"))
+    synthetic_badge(b, a)
     st.markdown(f"**{b.get('project_name')}** · {p['before']['date'] or '?'} → {p['after']['date'] or '?'} · "
                 f"`{b['id']}` → `{a['id']}`")
     try:

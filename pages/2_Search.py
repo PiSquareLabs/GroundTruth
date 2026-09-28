@@ -2,7 +2,7 @@
 import streamlit as st
 
 from gt import ai_provider, config, db, media, search
-from gt.ui import AI_BADGE, page_setup
+from gt.ui import AI_BADGE, page_setup, synthetic_badge
 
 page_setup("Search", "🔎")
 st.title("🔎 Search evidence by meaning")
@@ -52,6 +52,7 @@ for i, h in enumerate(hits):
     with cols[i % 4]:
         with st.container(border=True):
             st.image(media.url_for(a, "thumb", blur_faces=bool(a.get("people_present"))), width="stretch")
+            synthetic_badge(a)
             st.markdown(f"**{a.get('project_name')}** · {(a.get('captured_at') or 'no date')[:10]} · score {h['score']:.2f}")
             st.caption(f"{AI_BADGE}: {a.get('caption') or '—'}")
             st.caption(f"🧭 Why it matched: {h['why']}")

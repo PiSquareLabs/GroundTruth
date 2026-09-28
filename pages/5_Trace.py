@@ -2,7 +2,7 @@
 import streamlit as st
 
 from gt import db, media, trust
-from gt.ui import AI_BADGE, page_setup
+from gt.ui import AI_BADGE, SYNTHETIC_NOTE, page_setup
 
 page_setup("Trace", "🧾")
 st.title("🧾 Traceability")
@@ -27,6 +27,8 @@ with left:
         st.warning(flag, icon="⚠️")
 
 with right:
+    if a.get("synthetic"):
+        st.warning(SYNTHETIC_NOTE, icon="🧪")
     st.subheader("1 · Original asset")
     orig = media.original_url(a)
     st.markdown(f"- **Cloudinary public_id:** `{a.get('public_id') or 'not uploaded'}`\n"
@@ -36,9 +38,14 @@ with right:
                 f"{(a.get('bytes') or 0) // 1024} KB\n"
                 f"- **Project:** {a.get('project_name')} · **source:** {a.get('source')}")
 
-    st.subheader("2 · Capture metadata (EXIF)")
+    st.subheader("2 · Capture metadata")
     gps = "missing" if a.get("lat") is None else f"{a['lat']:.6f}, {a['lng']:.6f}"
-    st.markdown(f"- **Captured:** {a.get('captured_at') or 'missing'}\n- **GPS:** {gps}")
+    lines = [f"- **Captured:** {a.get('captured_at') or 'missing'}", f"- **GPS:** {gps}",
+             f"- **Metadata source:** {a.get('metadata_source') or 'EXIF'}"]
+    if a.get("role"):
+        lines.append(f"- **Dataset role (synthetic design label, not AI output):** {a['role']}")
+    st.markdown("\n".join(lines))
+    st.caption("Raw EXIF found in the file:")
     st.json(a.get("exif_json") or {}, expanded=False)
 
     st.subheader("3 · AI analysis")

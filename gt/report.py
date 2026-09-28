@@ -16,6 +16,8 @@ Use ONLY the facts in the JSON below. Rules:
 - Cite asset ids in square brackets, e.g. [drain-a-img-01], for every specific claim.
 - When describing before/after pairs, say "visible difference between confirmed paired images".
   Never claim verified environmental improvement or impact.
+- If "synthetic" is true, the first sentence must say the images are AI-generated synthetic demo data with
+  fictional locations and dates, and you must not describe them as evidence of real-world change.
 - 120-180 words, plain prose, 2-3 short paragraphs, no headings, no bullet lists.
 
 FACTS:
@@ -38,6 +40,7 @@ def facts(project_id: str = ALL) -> dict:
         pr["signals"].update(a.get("signals") or [])
     return {
         "scope": project_id,
+        "synthetic": any(a.get("synthetic") for a in assets),
         "image_count": len(assets),
         "date_range": [dates[0], dates[-1]] if dates else None,
         "projects": {k: {**v, "activities": dict(v["activities"]), "signals": dict(v["signals"])}
@@ -66,7 +69,9 @@ def template_summary(f: dict) -> str:
         return "No evidence in this scope yet."
     names = ", ".join(p["name"] for p in f["projects"].values())
     dr = f"between {f['date_range'][0]} and {f['date_range'][1]}" if f["date_range"] else "on unrecorded dates"
-    s = f"This report covers {f['image_count']} field images from {names}, captured {dr}. "
+    s = ("These are AI-generated synthetic demo images; locations and dates are fictional. "
+         if f.get("synthetic") else "")
+    s += f"This report covers {f['image_count']} field images from {names}, captured {dr}. "
     n = len(f["confirmed_pairs"])
     s += (f"{n} before/after pair(s) were confirmed by a reviewer and show a visible difference between "
           f"confirmed paired images." if n else "No before/after pairs have been confirmed yet.")
@@ -134,18 +139,21 @@ def to_html(project_label: str, f: dict, summary: dict, summary_is_ai: bool, ass
     label = (f"AI-suggested summary · {e(summary.get('model', ''))} · generated {e(summary.get('generated_at', ''))}"
              if summary_is_ai else "Template summary (no AI)")
     dr = " to ".join(f["date_range"]) if f["date_range"] else "n/a"
+    syn = ("<p class='syn'>🧪 SYNTHETIC DEMO DATA: all images are AI-generated and all locations and dates are "
+           "fictional, generated for demonstration. Nothing in this report is evidence of real-world change.</p>"
+           if f.get("synthetic") else "")
     return f"""<!doctype html><html><head><meta charset="utf-8"><title>Ground Truth report · {e(project_label)}</title>
 <style>
 body{{font-family:system-ui,sans-serif;max-width:900px;margin:24px auto;padding:0 16px;color:#1b1b1b}}
 h1{{color:#2E7D32}} .label{{font-size:12px;color:#666}} .note{{background:#f3f6f3;padding:8px 12px;border-radius:6px;font-size:13px}}
 .pair{{display:flex;gap:12px;margin:12px 0;page-break-inside:avoid}} figure{{margin:0;flex:1}} img{{width:100%;border-radius:4px}}
 figcaption{{font-size:12px;color:#555}} table{{border-collapse:collapse;width:100%;font-size:11px}} td,th{{border:1px solid #ddd;padding:4px;text-align:left;vertical-align:top}}
-code{{font-size:10px;word-break:break-all}} @media print{{.noprint{{display:none}} a{{color:inherit}}}}
+code{{font-size:10px;word-break:break-all}} .syn{{background:#fff3e0;border:2px solid #ef6c00;padding:8px 12px;border-radius:6px;font-weight:600}} @media print{{.noprint{{display:none}} a{{color:inherit}}}}
 </style></head><body>
 <button class="noprint" onclick="window.print()">Print / save as PDF</button>
 <h1>Ground Truth impact report</h1>
 <p><b>Scope:</b> {e(project_label)} · <b>Images:</b> {f['image_count']} · <b>Confirmed pairs:</b> {len(f['confirmed_pairs'])} · <b>Dates:</b> {e(dr)}</p>
-<h2>Summary</h2><p class="label">{label}</p>
+{syn}<h2>Summary</h2><p class="label">{label}</p>
 <div>{"".join(f"<p>{e(par)}</p>" for par in summary['text'].split(chr(10)) if par.strip())}</div>
 <p class="note">Before/after pairs show visible difference between confirmed paired images. They do not verify an environmental outcome.
 Captions and tags are AI-suggested. Faces are blurred where people may appear.</p>

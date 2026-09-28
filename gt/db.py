@@ -32,7 +32,10 @@ CREATE TABLE IF NOT EXISTS assets (
     lat REAL,
     lng REAL,
     exif_json TEXT,
-    source TEXT
+    source TEXT,
+    metadata_source TEXT,
+    role TEXT,
+    synthetic INTEGER DEFAULT 0
 );
 CREATE TABLE IF NOT EXISTS analyses (
     asset_id TEXT PRIMARY KEY REFERENCES assets(id),
@@ -94,6 +97,11 @@ def conn():
 def init_schema() -> None:
     with conn() as c:
         c.executescript(SCHEMA)
+        # lightweight migration: add columns introduced after a DB was created
+        have = {r["name"] for r in c.execute("PRAGMA table_info(assets)")}
+        for col, typ in (("metadata_source", "TEXT"), ("role", "TEXT"), ("synthetic", "INTEGER DEFAULT 0")):
+            if col not in have:
+                c.execute(f"ALTER TABLE assets ADD COLUMN {col} {typ}")
 
 
 def reset() -> None:

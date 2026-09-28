@@ -56,6 +56,9 @@ def load_into_db(data: dict) -> None:
                 "lng": a.get("lng"),
                 "exif_json": a.get("exif") or {},
                 "source": a.get("source", "seed"),
+                "metadata_source": a.get("metadata_source") or "EXIF",
+                "role": a.get("role"),
+                "synthetic": int(bool(a.get("synthetic", data.get("synthetic", False)))),
             },
         )
         an = a.get("analysis")
@@ -97,6 +100,7 @@ def load_into_db(data: dict) -> None:
 
     if data.get("report"):
         db.set_meta("report", json.dumps(data["report"]))
+    db.set_meta("synthetic", "1" if data.get("synthetic") else "0")
     if data.get("cloud_name"):
         db.set_meta("cloud_name", data["cloud_name"])
 

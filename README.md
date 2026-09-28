@@ -4,6 +4,9 @@
 
 **Live Demo:** _coming soon (deployment in progress)_ · **Demo video:** _coming soon_
 
+> 🧪 **The demo dataset is synthetic.** All seed images are AI-generated, and their locations and dates are
+> **fictional**, generated for demonstration. Nothing in the demo is evidence of real-world change. See [Synthetic demo data](#synthetic-demo-data).
+
 Built for **Code Cubicle 6.0** (Cloudinary problem statement).
 Repo: [github.com/PiSquareLabs/ground-truth-cloudinary](https://github.com/PiSquareLabs/ground-truth-cloudinary)
 
@@ -70,6 +73,14 @@ flowchart LR
 | | User accounts / roles, persistent hosted database | 🗓️ Planned |
 | | Video evidence | 🗓️ Planned |
 
+## Synthetic demo data
+
+- Every seed image is **AI-generated**; generators and prompts are listed per file in [`seed/SOURCES.md`](seed/SOURCES.md).
+- Capture dates and GPS coordinates come from [`seed/metadata.csv`](seed/metadata.example.csv) and are **fictional**. Generated images carry no real EXIF.
+- Every seed record has `"synthetic": true`. The app shows a visible **🧪 Synthetic demo data** badge on assets, search results, pair review and the report. The Report page (and its HTML export and campaign cards) states that the images and metadata are fictional.
+- `metadata.csv` also gives each image a design `role` (`before`, `after`, `filler`, `duplicate`) so the demo exercises pairing and duplicate detection. The role is shown on the Trace page as a dataset label. It is **not** used by the pair-scoring algorithm.
+- Confirmed pairs in the seed were confirmed by the maintainer (`seed/confirmed_pairs.txt` or `--confirm-by-role`). Synthetic pairs are never presented as verified evidence of real change.
+
 ## How demo mode works
 
 The public URL runs with **`DEMO_MODE=true`** (the default), so judges don't need to enter anything:
@@ -98,11 +109,11 @@ pytest -q                   # pair scoring, JSON-parse fallback, duplicate detec
 
 ### Building the demo seed (one-off, needs keys)
 
-1. Put photos **you own** in `seed/images/<project_id>/` (JPEG/PNG/WebP; convert HEIC first).
-2. Copy `seed/projects.example.json` → `seed/projects.json` and describe each project.
-3. Run `python scripts/seed_cloudinary.py`. It uploads originals to Cloudinary, extracts EXIF, analyzes each image, suggests pairs and writes `seed/analysis.json`.
-4. Review the suggestions (the script prints them; or run locally with `DEMO_MODE=false` and use the Pairs page). Write the approved ones to `seed/confirmed_pairs.txt` (see the `.example` file).
-5. Run `python scripts/seed_cloudinary.py --report` to apply confirmations and cache the AI report summaries. Commit `seed/`.
+1. Put the seed images in `seed/images/` (or `seed/`): JPEG/PNG/WebP.
+2. Describe them in `seed/metadata.csv` with columns `filename, project, captured_at, lat, lng, role, synthetic` (see `seed/metadata.example.csv`). Optionally add `seed/projects.json` for project names and descriptions.
+3. Run `python scripts/seed_cloudinary.py`. It uploads originals to Cloudinary, applies the CSV metadata, analyzes each image, appends missing files to `seed/SOURCES.md`, prints pair suggestions and writes `seed/analysis.json`.
+4. Review the suggestions. Either list approved pairs in `seed/confirmed_pairs.txt`, or pass `--confirm-by-role` to confirm suggested pairs whose CSV roles are before → after in the same project.
+5. Run `python scripts/seed_cloudinary.py --report` (add `--confirm-by-role` again if you used it) to cache the AI report summaries. Commit `seed/`.
 
 ### Environment variables
 
@@ -144,6 +155,8 @@ Locally these come from `.env`; on Streamlit Cloud, from **Secrets** (see `.stre
 - The demo DB is rebuilt from the committed seed file on start, because Streamlit Cloud's disk is temporary.
 - "Visual similarity" in pair scoring is the cosine similarity of **embeddings of AI captions + tags + signals** (a semantic proxy), not pixel comparison.
 - Missing GPS in the same project gives a neutral location score (0.5); a missing date gives a neutral time score (0.5).
+- Pairs are only suggested within one project.
+- For seed data, `metadata.csv` overrides EXIF (synthetic images have no real EXIF). Uploads in live mode use EXIF.
 - HTML report export instead of server-side PDF (no extra native dependencies; print to PDF from the browser).
 - Demo-mode review decisions are stored in the browser session, not the shared DB.
 - `numpy` pinned to 2.4.x, the last line with Python 3.11 wheels.
@@ -163,4 +176,4 @@ See [`screenshots/`](screenshots/).
 
 ## License
 
-Code: MIT. Seed images belong to their owners and are used with permission.
+Code: MIT. Seed images are AI-generated synthetic demo data; see `seed/SOURCES.md` for generators and prompts.

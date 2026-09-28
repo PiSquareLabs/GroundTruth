@@ -1,3 +1,4 @@
 # Human-reviewed before/after pairs for the demo seed. One pair per line: <before_asset_id> <after_asset_id>
-# Asset ids are <project_id>-<file-stem>, printed by scripts/seed_cloudinary.py.
-drain-ward-12-before-01 drain-ward-12-after-01
+# Asset ids are <project-slug>-<file-stem>, printed by scripts/seed_cloudinary.py.
+# (Alternative reviewer shortcut: --confirm-by-role confirms suggested pairs whose CSV roles are before -> after.)
+drain-cleaning-ward-12-drain-before-01 drain-cleaning-ward-12-drain-after-01

@@ -3,7 +3,7 @@ import streamlit as st
 from streamlit_image_comparison import image_comparison
 
 from gt import config, db, media, pairing, trust
-from gt.ui import page_setup
+from gt.ui import page_setup, synthetic_badge
 
 page_setup("Pairs", "🔁")
 st.title("🔁 Before / after pairs")
@@ -56,6 +56,7 @@ def breakdown_table(p: dict) -> None:
 
 def pair_header(p: dict) -> None:
     b, a = assets[p["before_id"]], assets[p["after_id"]]
+    synthetic_badge(b, a)
     st.markdown(f"**{b.get('project_name')}** · pair #{p['id']} · score **{p['score']:.2f}** · "
                 f"{(b.get('captured_at') or '?')[:10]} → {(a.get('captured_at') or '?')[:10]}")
     if frozenset((b["id"], a["id"])) in dupe_keys:
@@ -87,7 +88,8 @@ if view == "confirmed":
         with st.container(border=True):
             pair_header(p)
             st.caption("Slider shows the visible difference between confirmed paired images. "
-                       "It does not verify an environmental outcome.")
+                       "It does not verify an environmental outcome."
+                       + (" These are synthetic images: not evidence of real change." if b.get("synthetic") else ""))
             ub, ua = media.url_for(b, "compare", blur), media.url_for(a, "compare", blur)
             try:
                 image_comparison(img1=ub, img2=ua, label1="Before", label2="After", width=760, in_memory=True)
@@ -101,7 +103,8 @@ if view == "confirmed":
             with st.expander("📣 Campaign card (Cloudinary overlays)"):
                 d0, d1 = (b.get("captured_at") or "")[:10], (a.get("captured_at") or "")[:10]
                 card = media.campaign_card(b, a, headline=b.get("project_name") or "Field work",
-                                           footer=f"Before {d0 or '?'} | After {d1 or '?'} | visible difference, confirmed pair",
+                                           footer=("SYNTHETIC DEMO DATA | " if b.get("synthetic") else "")
+                                           + f"Before {d0 or '?'} | After {d1 or '?'} | visible difference, confirmed pair",
                                            blur_faces=blur)
                 if card:
                     st.image(card[0], width="stretch")
