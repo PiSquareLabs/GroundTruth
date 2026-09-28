@@ -98,6 +98,17 @@ if view == "confirmed":
                 t = media.transformation_for("compare", blur)
                 st.markdown(f"Transformation used for both images: `{t}`")
                 st.code(f"{ub}\n{ua}", language=None)
+            with st.expander("📣 Campaign card (Cloudinary overlays)"):
+                d0, d1 = (b.get("captured_at") or "")[:10], (a.get("captured_at") or "")[:10]
+                card = media.campaign_card(b, a, headline=b.get("project_name") or "Field work",
+                                           footer=f"Before {d0 or '?'} | After {d1 or '?'} | visible difference, confirmed pair",
+                                           blur_faces=blur)
+                if card:
+                    st.image(card[0], width="stretch")
+                    st.markdown(f"[Open / share image]({card[0]})")
+                    st.code(card[1], language=None)
+                else:
+                    st.caption("Needs both images on Cloudinary.")
             st.button("↩️ Move back to suggested", key=f"u{p['id']}", on_click=decide, args=(p, "suggested"))
 
 if view == "rejected":

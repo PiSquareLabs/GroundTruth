@@ -72,3 +72,32 @@ def upload(file, public_id: str, project_id: str) -> dict:
         resource_type="image",
         context={"project": project_id},
     )
+
+
+def _text_param(text: str) -> str:
+    """Cloudinary l_text escaping: URL-encode, then double-escape commas and slashes."""
+    from urllib.parse import quote
+
+    return quote(text, safe="").replace("%2C", "%252C").replace("%2F", "%252F")
+
+
+def campaign_card(before: dict, after: dict, headline: str, footer: str, blur_faces: bool = False) -> tuple[str, str] | None:
+    """Shareable 1200x630 card: before | after side by side with text overlays. Returns (url, transformation)."""
+    cn = cloud_name()
+    if not (cn and before.get("public_id") and after.get("public_id")):
+        return None
+    blur = f"{FACE_BLUR}/" if blur_faces else ""
+    layer_id = after["public_id"].replace("/", ":")
+    t = (
+        f"{blur}c_fill,g_auto,w_600,h_630/c_pad,w_1200,h_630,g_west,b_black/"
+        f"l_{layer_id}/{'e_blur_faces:800/' if blur_faces else ''}c_fill,g_auto,w_600,h_630/fl_layer_apply,g_east/"
+        f"l_text:Arial_44_bold:{_text_param(headline)},co_white,b_rgb:2E7D32/fl_layer_apply,g_north,y_24/"
+        f"l_text:Arial_24:{_text_param(footer)},co_white,b_rgb:00000099/fl_layer_apply,g_south,y_20/"
+        f"l_text:Arial_26_bold:BEFORE,co_white,b_rgb:00000099/fl_layer_apply,g_south_west,x_20,y_70/"
+        f"l_text:Arial_26_bold:AFTER,co_white,b_rgb:00000099/fl_layer_apply,g_south_east,x_20,y_70/"
+        f"q_auto/f_jpg"
+    )
+    url, _ = cloudinary.utils.cloudinary_url(before["public_id"], raw_transformation=t, cloud_name=cn, secure=True)
+    db.log_transform(before["id"], "campaign_card", t, url)
+    db.log_transform(after["id"], "campaign_card (layer)", t, url)
+    return url, t
