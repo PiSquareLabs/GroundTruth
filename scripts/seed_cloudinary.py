@@ -116,7 +116,10 @@ def main() -> None:
     data["pairs"] = [
         {**s, "status": "confirmed" if k in confirmed else "suggested"} for k, s in by_key.items()
     ]
-    print(f"{len(data['pairs'])} pairs ({len(confirmed)} confirmed)")
+    print(f"{len(data['pairs'])} pairs ({len(confirmed)} confirmed). Suggestions (before after score):")
+    for pr in sorted(data["pairs"], key=lambda x: -x["score"]):
+        mark = "CONFIRMED" if pr["status"] == "confirmed" else ""
+        print(f"  {pr['before_id']} {pr['after_id']}  {pr['score']:.2f}  {mark}")
 
     seed.write_seed(data)
     print(f"Wrote {config.SEED_FILE}")
