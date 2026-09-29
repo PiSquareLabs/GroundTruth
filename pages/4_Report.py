@@ -44,6 +44,11 @@ if is_ai:
 else:
     st.caption("Template summary (no AI). " + ("A cached AI summary is not available for this scope." if config.DEMO_MODE else ""))
 st.markdown(summary["text"])
+if summary.get("citation_issues"):
+    st.error("This AI summary cites asset ids that do not exist in the evidence: "
+             + ", ".join(f"`{i}`" for i in summary["citation_issues"]) + ". Treat those sentences as unreliable.")
+elif is_ai:
+    st.caption("✅ Every asset id cited in this summary exists in the evidence table.")
 with st.expander("Facts given to the model (the only allowed source)"):
     st.json(f, expanded=False)
 st.info("Before/after pairs show **visible difference between confirmed paired images**. "

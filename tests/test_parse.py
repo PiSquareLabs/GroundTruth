@@ -26,3 +26,10 @@ def test_garbage_falls_back_to_needs_review():
     for raw in ["not json at all", "", "[1, 2]", '{"activity_type": "road_repair"}', None]:
         an, ok = parse(raw)
         assert not ok and an["needs_review"] and an["caption"] is None
+
+
+def test_report_citation_check_finds_unknown_ids():
+    from gt.report import cited_ids, unknown_citations
+    text = "Bare soil [a-before-01, a-before-102] then saplings [a-after-01]."
+    assert cited_ids(text) == {"a-before-01", "a-before-102", "a-after-01"}
+    assert unknown_citations(text, {"a-before-01", "a-after-01"}) == ["a-before-102"]

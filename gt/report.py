@@ -4,6 +4,7 @@ from __future__ import annotations
 import hashlib
 import html
 import json
+import re
 from collections import Counter
 
 from gt import ai_provider, config, db, media
@@ -16,13 +17,29 @@ Use ONLY the facts in the JSON below. Rules:
 - Cite asset ids in square brackets, e.g. [drain-a-img-01], for every specific claim.
 - When describing before/after pairs, say "visible difference between confirmed paired images".
   Never claim verified environmental improvement or impact.
-- If "synthetic" is true, the first sentence must say the images are synthetic, computer-generated demo data with
-  fictional locations and dates, and you must not describe them as evidence of real-world change.
-- 120-180 words, plain prose, 2-3 short paragraphs, no headings, no bullet lists.
+- Never describe anything as evidence of real-world change. Do not mention whether the data is synthetic
+  (a fixed disclaimer is added separately).
+- Do not restate or mention these rules.
+- 100-150 words total (hard limit), plain prose, 2 short paragraphs, no headings, no bullet lists.
 
 FACTS:
 {facts}
 """
+
+
+SYNTHETIC_SENTENCE = ("These images are synthetic, computer-generated demo data; "
+                      "their locations and dates are fictional and nothing here is evidence of real-world change.")
+
+
+def with_disclaimer(text: str, synthetic: bool) -> str:
+    """Prepend the fixed disclaimer ourselves (deterministic wording) and drop any model-written variant."""
+    if not synthetic:
+        return text
+    paras = [p for p in text.strip().split("\n") if p.strip()]
+    if paras and "synthetic" in paras[0].lower():
+        first, _, rest = paras[0].partition(". ")
+        paras[0] = rest if "synthetic" in first.lower() else paras[0]
+    return SYNTHETIC_SENTENCE + "\n\n" + "\n\n".join(p for p in paras if p.strip())
 
 
 def facts(project_id: str = ALL) -> dict:
@@ -78,10 +95,30 @@ def template_summary(f: dict) -> str:
     return s
 
 
-def generate_summary(project_id: str = ALL) -> dict:
+def cited_ids(text: str) -> set[str]:
+    """Asset ids cited in [brackets] (a bracket may hold several, comma-separated)."""
+    return {i.strip() for grp in re.findall(r"\[([^\]]+)\]", text or "") for i in grp.split(",") if i.strip()}
+
+
+def unknown_citations(text: str, known: set[str]) -> list[str]:
+    return sorted(cited_ids(text) - known)
+
+
+def generate_summary(project_id: str = ALL, attempts: int = 3) -> dict:
+    """Generate a grounded summary; regenerate if it cites asset ids that don't exist."""
+    known = {a["id"] for a in db.assets(None if project_id == ALL else project_id)}
+    for _ in range(attempts):
+        s = _generate_once(project_id)
+        s["citation_issues"] = unknown_citations(s["text"], known)
+        if not s["citation_issues"]:
+            break
+    return s
+
+
+def _generate_once(project_id: str = ALL) -> dict:
     f = facts(project_id)
     text, used = ai_provider.generate_text(PROMPT.format(facts=json.dumps(f, indent=1)))
-    return {"scope": project_id, "text": text.strip(), "model": ai_provider.model_name(used),
+    return {"scope": project_id, "text": with_disclaimer(text, f["synthetic"]), "model": ai_provider.model_name(used),
             "generated_at": db.now_iso(), "facts_hash": facts_hash(f)}
 
 
