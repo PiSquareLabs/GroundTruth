@@ -7,7 +7,7 @@ from gt import config, db, seed
 
 AI_BADGE = "🤖 AI-suggested"
 SYNTHETIC_BADGE = ":orange-badge[🧪 Synthetic demo data]"
-SYNTHETIC_NOTE = ("Seed images are **AI-generated synthetic demo data**. Their locations and dates are "
+SYNTHETIC_NOTE = ("Seed images are **synthetic, computer-generated demo data**. Their locations and dates are "
                   "**fictional**, generated for demonstration. Nothing here is evidence of real-world change.")
 
 
@@ -29,7 +29,7 @@ def page_setup(title: str, icon: str = "🌱") -> None:
             st.warning("**Live mode, not configured.** Set CLOUDINARY_URL and GEMINI_API_KEY "
                        "to enable uploads.", icon="⚠️")
         if db.get_meta("synthetic") == "1":
-            st.warning("🧪 **Synthetic demo data.** AI-generated images; locations and dates are fictional.")
+            st.warning("🧪 **Synthetic demo data.** Computer-generated images; locations and dates are fictional.")
         st.caption(f"Data: {status}")
 
 

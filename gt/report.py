@@ -16,7 +16,7 @@ Use ONLY the facts in the JSON below. Rules:
 - Cite asset ids in square brackets, e.g. [drain-a-img-01], for every specific claim.
 - When describing before/after pairs, say "visible difference between confirmed paired images".
   Never claim verified environmental improvement or impact.
-- If "synthetic" is true, the first sentence must say the images are AI-generated synthetic demo data with
+- If "synthetic" is true, the first sentence must say the images are synthetic, computer-generated demo data with
   fictional locations and dates, and you must not describe them as evidence of real-world change.
 - 120-180 words, plain prose, 2-3 short paragraphs, no headings, no bullet lists.
 
@@ -69,7 +69,7 @@ def template_summary(f: dict) -> str:
         return "No evidence in this scope yet."
     names = ", ".join(p["name"] for p in f["projects"].values())
     dr = f"between {f['date_range'][0]} and {f['date_range'][1]}" if f["date_range"] else "on unrecorded dates"
-    s = ("These are AI-generated synthetic demo images; locations and dates are fictional. "
+    s = ("These are synthetic, computer-generated demo images; locations and dates are fictional. "
          if f.get("synthetic") else "")
     s += f"This report covers {f['image_count']} field images from {names}, captured {dr}. "
     n = len(f["confirmed_pairs"])
@@ -139,7 +139,7 @@ def to_html(project_label: str, f: dict, summary: dict, summary_is_ai: bool, ass
     label = (f"AI-suggested summary · {e(summary.get('model', ''))} · generated {e(summary.get('generated_at', ''))}"
              if summary_is_ai else "Template summary (no AI)")
     dr = " to ".join(f["date_range"]) if f["date_range"] else "n/a"
-    syn = ("<p class='syn'>🧪 SYNTHETIC DEMO DATA: all images are AI-generated and all locations and dates are "
+    syn = ("<p class='syn'>🧪 SYNTHETIC DEMO DATA: all images are computer-generated and all locations and dates are "
            "fictional, generated for demonstration. Nothing in this report is evidence of real-world change.</p>"
            if f.get("synthetic") else "")
     return f"""<!doctype html><html><head><meta charset="utf-8"><title>Ground Truth report · {e(project_label)}</title>
