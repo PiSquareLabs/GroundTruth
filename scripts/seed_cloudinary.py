@@ -6,7 +6,7 @@ Inputs:
     seed/projects.json      optional: nicer names/descriptions per project id
     seed/confirmed_pairs.txt  optional, human-reviewed "before_id after_id" per line
 
-The seed images are SYNTHETIC (AI-generated) and their locations/dates are fictional. metadata.csv is the
+The seed images are SYNTHETIC (computer-generated) and their locations/dates are fictional. metadata.csv is the
 source for capture time and GPS (generated images carry no real EXIF).
 
 Usage (needs CLOUDINARY_URL and GEMINI_API_KEY in .env):
@@ -139,7 +139,7 @@ def main() -> None:
             seen.add(pid)
             projects.append(named.get(pid) or {
                 "id": pid, "name": r.get("project") or pid,
-                "description": "Synthetic demo project (AI-generated images, fictional location and dates).",
+                "description": "Synthetic demo project (computer-generated images, fictional location and dates).",
                 "location_name": "Fictional location",
             })
 

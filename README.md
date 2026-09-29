@@ -4,7 +4,7 @@
 
 **Live Demo:** _coming soon (deployment in progress)_ · **Demo video:** _coming soon_
 
-> 🧪 **The demo dataset is synthetic.** All seed images are AI-generated, and their locations and dates are
+> 🧪 **The demo dataset is synthetic.** All seed images are computer-generated (procedurally rendered, not photographs), and their locations and dates are
 > **fictional**, generated for demonstration. Nothing in the demo is evidence of real-world change. See [Synthetic demo data](#synthetic-demo-data).
 
 Built for **Code Cubicle 6.0** (Cloudinary problem statement).
@@ -75,7 +75,7 @@ flowchart LR
 
 ## Synthetic demo data
 
-- Every seed image is **AI-generated**; generators and prompts are listed per file in [`seed/SOURCES.md`](seed/SOURCES.md).
+- Every seed image is **computer-generated**: drawn procedurally by [`scripts/generate_synthetic_seed.py`](scripts/generate_synthetic_seed.py) (Pillow + numpy, deterministic). The generator and a scene description are listed per file in [`seed/SOURCES.md`](seed/SOURCES.md).
 - Capture dates and GPS coordinates come from [`seed/metadata.csv`](seed/metadata.example.csv) and are **fictional**. Generated images carry no real EXIF.
 - Every seed record has `"synthetic": true`. The app shows a visible **🧪 Synthetic demo data** badge on assets, search results, pair review and the report. The Report page (and its HTML export and campaign cards) states that the images and metadata are fictional.
 - `metadata.csv` also gives each image a design `role` (`before`, `after`, `filler`, `duplicate`) so the demo exercises pairing and duplicate detection. The role is shown on the Trace page as a dataset label. It is **not** used by the pair-scoring algorithm.
@@ -109,8 +109,8 @@ pytest -q                   # pair scoring, JSON-parse fallback, duplicate detec
 
 ### Building the demo seed (one-off, needs keys)
 
-1. Put the seed images in `seed/images/` (or `seed/`): JPEG/PNG/WebP.
-2. Describe them in `seed/metadata.csv` with columns `filename, project, captured_at, lat, lng, role, synthetic` (see `seed/metadata.example.csv`). Optionally add `seed/projects.json` for project names and descriptions.
+1. Run `python scripts/generate_synthetic_seed.py` (no keys needed). It renders the synthetic images into `seed/images/` and writes `seed/metadata.csv`, `seed/projects.json` and the `seed/SOURCES.md` rows. To use your own images instead, put them in `seed/images/` (or `seed/`) as JPEG/PNG/WebP.
+2. For your own images, describe them in `seed/metadata.csv` with columns `filename, project, captured_at, lat, lng, role, synthetic` (see `seed/metadata.example.csv`). Optionally add `seed/projects.json` for project names and descriptions.
 3. Run `python scripts/seed_cloudinary.py`. It uploads originals to Cloudinary, applies the CSV metadata, analyzes each image, appends missing files to `seed/SOURCES.md`, prints pair suggestions and writes `seed/analysis.json`.
 4. Review the suggestions. Either list approved pairs in `seed/confirmed_pairs.txt`, or pass `--confirm-by-role` to confirm suggested pairs whose CSV roles are before → after in the same project.
 5. Run `python scripts/seed_cloudinary.py --report` (add `--confirm-by-role` again if you used it) to cache the AI report summaries. Commit `seed/`.
@@ -177,4 +177,4 @@ See [`screenshots/`](screenshots/).
 
 ## License
 
-Code: MIT. Seed images are AI-generated synthetic demo data; see `seed/SOURCES.md` for generators and prompts.
+Code: MIT. Seed images are synthetic, computer-generated demo data; see `seed/SOURCES.md` for generators and prompts.
