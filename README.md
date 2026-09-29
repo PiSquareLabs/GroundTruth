@@ -165,7 +165,8 @@ Locally these come from `.env`; on Streamlit Cloud, from **Secrets** (see `.stre
 
 ## Known limitations
 
-- Visual similarity is semantic (caption/tag embeddings), so two different drains with similar captions can score high. Location and time factors offset this, and a human confirms.
+- Visual similarity is semantic (caption/tag embeddings), so two different drains with similar captions can score high.
+- Without an AI key, search falls back to keyword/tag matching, which cannot tell "blocked drain" from "clear drain" as well as semantic search can. Location and time factors offset this, and a human confirms.
 - Face blur depends on Cloudinary's face detection and can miss small or partial faces.
 - The demo database is temporary and shared per container; live-mode data is lost when a Cloud container restarts.
 - Pairing compares all images with the same activity type (O(n²)). That's fine for hundreds of images, not tens of thousands.

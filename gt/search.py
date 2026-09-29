@@ -43,12 +43,16 @@ def keyword_search(query: str, assets: list[dict], top_k: int = 24) -> list[dict
         m = _matched_terms(q, a)
         if not m:
             continue
-        s = sum(weights[f] * len(v) for f, v in m.items()) / (2.0 * max(len(q), 1))
-        hits.append({"asset": a, "score": min(s, 1.0), "why": "keyword match — " + _why(m)})
+        # each query word counts once, by the most specific field it matched; score = weighted coverage
+        best = {t: max(weights[f] for f, v in m.items() if t in v) for t in {t for v in m.values() for t in v}}
+        s = sum(best.values()) / (max(weights.values()) * max(len(q), 1))
+        hits.append({"asset": a, "score": s, "why": "keyword match — " + _why(m)})
     return sorted(hits, key=lambda h: -h["score"])[:top_k]
 
 
-def semantic_search(query_emb: list[float], query: str, assets: list[dict], top_k: int = 24, min_sim: float = 0.3) -> list[dict]:
+def semantic_search(query_emb: list[float], query: str, assets: list[dict], top_k: int = 24,
+                    min_sim: float = 0.6, rel_window: float = 0.15) -> list[dict]:
+    """Keep hits with cosine >= min_sim and within rel_window of the best hit (tuned on gemini-embedding-001)."""
     q = tokens(query)
     hits = []
     for a in assets:
@@ -62,4 +66,7 @@ def semantic_search(query_emb: list[float], query: str, assets: list[dict], top_
         why = f"meaning similarity {s:.2f}"
         why += f"; shared terms — {_why(m)}" if m else "; no shared words (matched on meaning of caption/tags)"
         hits.append({"asset": a, "score": s, "why": why})
-    return sorted(hits, key=lambda h: -h["score"])[:top_k]
+    hits.sort(key=lambda h: -h["score"])
+    if hits:
+        hits = [h for h in hits if h["score"] >= hits[0]["score"] - rel_window]
+    return hits[:top_k]

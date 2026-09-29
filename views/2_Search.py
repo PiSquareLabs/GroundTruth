@@ -56,4 +56,4 @@ for i, h in enumerate(hits):
             st.markdown(f"**{a.get('project_name')}** · {(a.get('captured_at') or 'no date')[:10]} · score {h['score']:.2f}")
             st.caption(f"{AI_BADGE}: {a.get('caption') or '—'}")
             st.caption(f"🧭 Why it matched: {h['why']}")
-            st.page_link("pages/5_Trace.py", label="Trace", icon="🧾", query_params={"asset": a["id"]})
+            st.page_link("views/5_Trace.py", label="Trace", icon="🧾", query_params={"asset": a["id"]})

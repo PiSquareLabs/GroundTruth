@@ -75,4 +75,4 @@ for pid in [p for p in projects if any(a["project_id"] == p for a in shown)]:
                     st.caption("Signals: " + ", ".join(a["signals"]))
                 for flag in trust.metadata_flags(a):
                     st.caption(f"⚠️ {flag}")
-                st.page_link("pages/5_Trace.py", label="Trace", icon="🧾", query_params={"asset": a["id"]})
+                st.page_link("views/5_Trace.py", label="Trace", icon="🧾", query_params={"asset": a["id"]})
