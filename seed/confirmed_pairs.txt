@@ -1,0 +1,7 @@
+# Before/after pairs confirmed by the maintainer after reviewing the suggestions (2026-09-29).
+# Synthetic demo data: confirmation shows visible difference between paired images, not real-world change.
+drain-cleaning-ward-12-drain-before-01 drain-cleaning-ward-12-drain-after-01
+drain-cleaning-ward-12-drain-before-02 drain-cleaning-ward-12-drain-after-02
+tree-planting-lakeside-lakeside-before-01 tree-planting-lakeside-lakeside-after-01
+tree-planting-lakeside-lakeside-before-02 tree-planting-lakeside-lakeside-after-02
+park-clean-up-riverside-park-before-01 park-clean-up-riverside-park-after-01

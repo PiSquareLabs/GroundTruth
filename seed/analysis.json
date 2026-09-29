@@ -12262,7 +12262,7 @@
           "note": "after is 15 days later"
         }
       },
-      "status": "suggested"
+      "status": "confirmed"
     },
     {
       "before_id": "drain-cleaning-ward-12-drain-before-01",
@@ -12285,7 +12285,7 @@
           "note": "after is 14 days later"
         }
       },
-      "status": "suggested"
+      "status": "confirmed"
     },
     {
       "before_id": "tree-planting-lakeside-lakeside-before-02",
@@ -12308,7 +12308,7 @@
           "note": "after is 41 days later"
         }
       },
-      "status": "suggested"
+      "status": "confirmed"
     },
     {
       "before_id": "park-clean-up-riverside-park-before-01",
@@ -12331,7 +12331,7 @@
           "note": "after is 0 days later"
         }
       },
-      "status": "suggested"
+      "status": "confirmed"
     },
     {
       "before_id": "drain-cleaning-ward-12-drain-before-01",
@@ -12400,7 +12400,7 @@
           "note": "after is 42 days later"
         }
       },
-      "status": "suggested"
+      "status": "confirmed"
     },
     {
       "before_id": "drain-cleaning-ward-12-drain-signboard",
@@ -12519,6 +12519,39 @@
     }
   ],
   "transforms": [],
-  "report": null,
+  "report": {
+    "all": {
+      "scope": "all",
+      "text": "These images are synthetic, computer-generated demo data; their locations and dates are fictional and nothing here is evidence of real-world change.\n\nThe field-evidence report documents activities across three project areas between 2026-05-10 and 2026-09-01, utilizing a total of 15 images. Projects include tree planting at Lakeside, drain cleaning in Ward 12, and a park clean-up at Riverside [drain-cleaning-ward-12-drain-signboard, tree-planting-lakeside-lakeside-nursery, park-clean-up-riverside-park-after-01-offsite]. The documentation captures initial conditions such as clogged drains and litter, alongside subsequent activities involving waste clearing and sapling installation [drain-cleaning-ward-12-drain-before-01, tree-planting-lakeside-lakeside-before-01, park-clean-up-riverside-park-before-01].\n\nThere is a visible difference between confirmed paired images comparing pre- and post-activity states across the sites [drain-cleaning-ward-12-drain-before-02, drain-cleaning-ward-12-drain-after-02]. Pairs such as drain-cleaning-ward-12-drain-before-01 and drain-cleaning-ward-12-drain-after-01 show the transition from a clogged canal to a clear drain [drain-cleaning-ward-12-drain-before-01, drain-cleaning-ward-12-drain-after-01]. Similarly, tree-planting-lakeside-lakeside-before-01 and tree-planting-lakeside-lakeside-after-01 contrast bare soil with newly planted saplings [tree-planting-lakeside-lakeside-before-01, tree-planting-lakeside-lakeside-after-01], while park-clean-up-riverside-park-before-01 and park-clean-up-riverside-park-after-01 document the shift from scattered litter to clean ground [park-clean-up-riverside-park-before-01, park-clean-up-riverside-park-after-01].",
+      "model": "gemini:gemini-3.5-flash-lite",
+      "generated_at": "2026-09-29T17:15:35+00:00",
+      "facts_hash": "5a43be138096",
+      "citation_issues": []
+    },
+    "drain-cleaning-ward-12": {
+      "scope": "drain-cleaning-ward-12",
+      "text": "These images are synthetic, computer-generated demo data; their locations and dates are fictional and nothing here is evidence of real-world change.\n\nThe scope includes 6 images spanning from 2026-05-10 to 2026-05-26 for the drain-cleaning-ward-12 project. Activities recorded consist of 5 drain cleaning tasks and 1 other activity. Signals identified across the image set include 2 instances of clogged drains, 2 instances of litter, 2 instances of debris, 3 instances of clear drains, and 2 instances of clean ground. A sign announcing a community drain cleaning drive in progress is captured in [drain-cleaning-ward-12-drain-signboard].\n\nWhen examining the records, there is a visible difference between confirmed paired images. The first pair comprises [drain-cleaning-ward-12-drain-before-01] dated 2026-05-10, depicting a concrete drainage canal filled with litter and garbage, and [drain-cleaning-ward-12-drain-after-01] dated 2026-05-24, showing a concrete drainage canal with clear water. An additional view is logged in [drain-cleaning-ward-12-drain-after-01-copy]. The second pair features [drain-cleaning-ward-12-drain-before-02] from 2026-05-11, showing a drainage canal filled with colorful trash and debris, matched with [drain-cleaning-ward-12-drain-after-02] from 2026-05-26, depicting a clean drainage channel.",
+      "model": "gemini:gemini-3.5-flash-lite",
+      "generated_at": "2026-09-29T17:16:03+00:00",
+      "facts_hash": "32c81b9eabad",
+      "citation_issues": []
+    },
+    "tree-planting-lakeside": {
+      "scope": "tree-planting-lakeside",
+      "text": "These images are synthetic, computer-generated demo data; their locations and dates are fictional and nothing here is evidence of real-world change.\n\nThis report reviews activities for the tree-planting-lakeside project, covering a total of 6 images captured between 2026-06-02 and 2026-09-01. Project records document 5 tree planting activities and 1 other activity. Across the collected image set, signals of bare_soil appear 6 times and saplings appear 4 times. Additional visual documentation includes a top-down view of numerous circular pots arranged neatly in rows containing saplings planted in bare soil [tree-planting-lakeside-lakeside-nursery] and an illustration depicting numerous saplings planted in rows across bare soil near a large body of water [tree-planting-lakeside-lakeside-after-01-late].\n\nThere is a visible difference between confirmed paired images. The first pair spans from 2026-06-02 [tree-planting-lakeside-lakeside-before-01] to 2026-07-14 [tree-planting-lakeside-lakeside-after-01], showing an expanse transitioning to rows of newly planted saplings supported by stakes on bare soil near a body of water. The second pair spans from 2026-06-03 [tree-planting-lakeside-lakeside-before-02] to 2026-07-15 [tree-planting-lakeside-lakeside-after-02], capturing bare soil transforming into newly planted saplings growing in rows near a body of water.",
+      "model": "gemini:gemini-3.5-flash-lite",
+      "generated_at": "2026-09-29T17:16:26+00:00",
+      "facts_hash": "8339ede1dd51",
+      "citation_issues": []
+    },
+    "park-clean-up-riverside": {
+      "scope": "park-clean-up-riverside",
+      "text": "These images are synthetic, computer-generated demo data; their locations and dates are fictional and nothing here is evidence of real-world change.\n\nThe field-evidence report for the park-clean-up-riverside project details activities conducted between 2026-08-03 and 2026-08-04, incorporating a total of 3 images. The documented activities include 1 waste clearing action and 2 other activities. The initial documentation captures an outdoor park area featuring a walking path, a bench, and scattered litter on the grass [park-clean-up-riverside-park-before-01]. Subsequent captures on 2026-08-03 and 2026-08-04 illustrate paths through grassy parks with benches and trash bins under blue skies [park-clean-up-riverside-park-after-01, park-clean-up-riverside-park-after-01-offsite].\n\nSignal detections across the dataset note 1 instance of litter and 2 instances of clean ground. There is a visible difference between confirmed paired images when comparing the initial park view [park-clean-up-riverside-park-before-01] with the subsequent park illustration [park-clean-up-riverside-park-after-01].",
+      "model": "gemini:gemini-3.5-flash-lite",
+      "generated_at": "2026-09-29T17:16:49+00:00",
+      "facts_hash": "1ea9cd0d44bd",
+      "citation_issues": []
+    }
+  },
   "synthetic": true
 }
