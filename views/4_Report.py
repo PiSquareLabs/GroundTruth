@@ -4,7 +4,7 @@ import streamlit.components.v1 as components
 from streamlit_image_comparison import image_comparison
 
 from gt import config, db, media, report
-from gt.ui import AI_BADGE, SYNTHETIC_NOTE, any_synthetic, page_setup, synthetic_badge
+from gt.ui import AI_BADGE, demo_banner, page_setup, synthetic_badge
 
 page_setup("Report", "📄")
 st.title("📄 Impact report")
@@ -17,8 +17,7 @@ if not f["image_count"]:
     st.stop()
 assets = db.assets(None if scope == report.ALL else scope)
 
-if any_synthetic(assets):
-    st.warning(SYNTHETIC_NOTE + " This report demonstrates the reporting workflow only.", icon="🧪")
+demo_banner(assets)
 
 c1, c2, c3 = st.columns(3)
 c1.metric("Images", f["image_count"])

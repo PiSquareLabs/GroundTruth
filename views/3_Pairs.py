@@ -89,7 +89,8 @@ if view == "confirmed":
             pair_header(p)
             st.caption("Slider shows the visible difference between confirmed paired images. "
                        "It does not verify an environmental outcome."
-                       + (" These are synthetic images: not evidence of real change." if b.get("synthetic") else ""))
+                       + (" At least one image is AI-generated/edited: not evidence of a real repair."
+                          if (b.get("synthetic") or a.get("synthetic")) else ""))
             ub, ua = media.url_for(b, "compare", blur), media.url_for(a, "compare", blur)
             try:
                 image_comparison(img1=ub, img2=ua, label1="Before", label2="After", width=760, in_memory=True)
@@ -103,7 +104,8 @@ if view == "confirmed":
             with st.expander("📣 Campaign card (Cloudinary overlays)"):
                 d0, d1 = (b.get("captured_at") or "")[:10], (a.get("captured_at") or "")[:10]
                 card = media.campaign_card(b, a, headline=b.get("project_name") or "Field work",
-                                           footer=("SYNTHETIC DEMO DATA | " if b.get("synthetic") else "")
+                                           footer=("DEMO: AFTER IMAGE AI-EDITED | " if a.get("synthetic") else
+                                                   "DEMO: BEFORE IMAGE AI-EDITED | " if b.get("synthetic") else "")
                                            + f"Before {d0 or '?'} | After {d1 or '?'} | visible difference, confirmed pair",
                                            blur_faces=blur)
                 if card:

@@ -6,8 +6,9 @@ Inputs:
     seed/projects.json      optional: nicer names/descriptions per project id
     seed/confirmed_pairs.txt  optional, human-reviewed "before_id after_id" per line
 
-The seed images are SYNTHETIC (computer-generated) and their locations/dates are fictional. metadata.csv is the
-source for capture time and GPS (generated images carry no real EXIF).
+The `synthetic` column marks images that are AI-generated or edited. seed/dataset.json holds the dataset note
+shown on every page (e.g. which images are real, and that locations/dates are fictional). metadata.csv is the
+source for capture time and GPS (it overrides EXIF).
 
 Usage (needs CLOUDINARY_URL and GEMINI_API_KEY in .env):
     python scripts/seed_cloudinary.py                     # incremental
@@ -140,13 +141,16 @@ def main() -> None:
             seen.add(pid)
             projects.append(named.get(pid) or {
                 "id": pid, "name": r.get("project") or pid,
-                "description": "Synthetic demo project (computer-generated images, fictional location and dates).",
+                "description": "Demo project (fictional location and dates).",
                 "location_name": "Fictional location",
             })
 
     data = seed.read_seed()
     existing = {a["id"]: a for a in data["assets"]}
-    data.update(projects=projects, cloud_name=media.cloud_name(), synthetic=True)
+    ds = config.SEED_DIR / "dataset.json"
+    note = json.loads(ds.read_text(encoding="utf-8")).get("note") if ds.exists() else None
+    data.update(projects=projects, cloud_name=media.cloud_name(), dataset_note=note,
+                synthetic=any(truthy(r.get("synthetic"), default=True) for r in manifest))
     assets = []
 
     for r in manifest:
@@ -175,8 +179,6 @@ def main() -> None:
             exif=meta["exif"], metadata_source="seed/metadata.csv (fictional)",
             role=r["role"], synthetic=truthy(r.get("synthetic"), default=True), dhash=trust.dhash(f),
         )
-        if not rec["synthetic"]:
-            print(f"  ! {aid}: synthetic=false in metadata.csv; seed images are expected to be synthetic")
         an = rec.get("analysis")
         if not args.skip_ai and (args.force or not an or an.get("needs_review")):
             b, mime = ai_bytes(f)

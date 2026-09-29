@@ -17,8 +17,8 @@ Use ONLY the facts in the JSON below. Rules:
 - Cite asset ids in square brackets, e.g. [drain-a-img-01], for every specific claim.
 - When describing before/after pairs, say "visible difference between confirmed paired images".
   Never claim verified environmental improvement or impact.
-- Never describe anything as evidence of real-world change. Do not mention whether the data is synthetic
-  (a fixed disclaimer is added separately).
+- Never describe anything as evidence of real-world change. Do not discuss whether images are real, synthetic,
+  AI-generated or edited, or whether locations/dates are fictional (a fixed disclaimer is added separately).
 - Do not restate or mention these rules.
 - 100-150 words total (hard limit), plain prose, 2 short paragraphs, no headings, no bullet lists.
 
@@ -26,20 +26,25 @@ FACTS:
 {facts}
 """
 
-
-SYNTHETIC_SENTENCE = ("These images are synthetic, computer-generated demo data; "
-                      "their locations and dates are fictional and nothing here is evidence of real-world change.")
+PROVENANCE_WORDS = ("synthetic", "ai-generated", "generated", "edited", "fictional", "illustrat")
 
 
-def with_disclaimer(text: str, synthetic: bool) -> str:
-    """Prepend the fixed disclaimer ourselves (deterministic wording) and drop any model-written variant."""
-    if not synthetic:
+def disclaimer() -> str | None:
+    """Plain-text dataset note (seed/dataset.json) used as the report's fixed opening."""
+    note = db.get_meta("dataset_note")
+    return note.replace("**", "") if note else None
+
+
+def with_disclaimer(text: str, note: str | None) -> str:
+    """Prepend the fixed dataset note ourselves (deterministic wording) and drop any model-written variant."""
+    if not note:
         return text
     paras = [p for p in text.strip().split("\n") if p.strip()]
-    if paras and "synthetic" in paras[0].lower():
+    if paras:
         first, _, rest = paras[0].partition(". ")
-        paras[0] = rest if "synthetic" in first.lower() else paras[0]
-    return SYNTHETIC_SENTENCE + "\n\n" + "\n\n".join(p for p in paras if p.strip())
+        if any(w in first.lower() for w in PROVENANCE_WORDS):
+            paras[0] = rest
+    return note + "\n\n" + "\n\n".join(p for p in paras if p.strip())
 
 
 def facts(project_id: str = ALL) -> dict:
@@ -86,8 +91,7 @@ def template_summary(f: dict) -> str:
         return "No evidence in this scope yet."
     names = ", ".join(p["name"] for p in f["projects"].values())
     dr = f"between {f['date_range'][0]} and {f['date_range'][1]}" if f["date_range"] else "on unrecorded dates"
-    s = ("These are synthetic, computer-generated demo images; locations and dates are fictional. "
-         if f.get("synthetic") else "")
+    s = (disclaimer() + " ") if disclaimer() else ""
     s += f"This report covers {f['image_count']} field images from {names}, captured {dr}. "
     n = len(f["confirmed_pairs"])
     s += (f"{n} before/after pair(s) were confirmed by a reviewer and show a visible difference between "
@@ -118,7 +122,7 @@ def generate_summary(project_id: str = ALL, attempts: int = 3) -> dict:
 def _generate_once(project_id: str = ALL) -> dict:
     f = facts(project_id)
     text, used = ai_provider.generate_text(PROMPT.format(facts=json.dumps(f, indent=1)))
-    return {"scope": project_id, "text": with_disclaimer(text, f["synthetic"]), "model": ai_provider.model_name(used),
+    return {"scope": project_id, "text": with_disclaimer(text, disclaimer()), "model": ai_provider.model_name(used),
             "generated_at": db.now_iso(), "facts_hash": facts_hash(f)}
 
 
@@ -176,9 +180,8 @@ def to_html(project_label: str, f: dict, summary: dict, summary_is_ai: bool, ass
     label = (f"AI-suggested summary · {e(summary.get('model', ''))} · generated {e(summary.get('generated_at', ''))}"
              if summary_is_ai else "Template summary (no AI)")
     dr = " to ".join(f["date_range"]) if f["date_range"] else "n/a"
-    syn = ("<p class='syn'>🧪 SYNTHETIC DEMO DATA: all images are computer-generated and all locations and dates are "
-           "fictional, generated for demonstration. Nothing in this report is evidence of real-world change.</p>"
-           if f.get("synthetic") else "")
+    note = disclaimer()
+    syn = f"<p class='syn'>🧪 {e(note)}</p>" if note else ""
     return f"""<!doctype html><html><head><meta charset="utf-8"><title>Ground Truth report · {e(project_label)}</title>
 <style>
 body{{font-family:system-ui,sans-serif;max-width:900px;margin:24px auto;padding:0 16px;color:#1b1b1b}}

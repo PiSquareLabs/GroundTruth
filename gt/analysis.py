@@ -6,10 +6,13 @@ import re
 
 from gt import ai_provider, config, db
 
-ACTIVITIES = ["drain_cleaning", "tree_planting", "road_repair", "waste_clearing", "other"]
+ACTIVITIES = ["drain_cleaning", "drainage_repair", "electrical_repair", "utility_repair", "tree_planting",
+              "road_repair", "waste_clearing", "other"]
 SIGNALS = [
     "standing_water", "clogged_drain", "clear_drain", "litter", "waste_pile", "clean_ground",
     "bare_soil", "saplings", "mature_trees", "potholes", "fresh_asphalt", "debris", "workers_present",
+    "exposed_wiring", "tangled_cables", "wiring_in_conduit", "damaged_cover", "intact_cover",
+    "broken_concrete", "rust", "overgrown_vegetation", "cleared_vegetation",
 ]
 
 SCHEMA = {
@@ -25,7 +28,7 @@ SCHEMA = {
 }
 
 PROMPT = (
-    "You are cataloguing field photos of civic and environmental work for an NGO evidence library. "
+    "You are cataloguing field photos of civic, infrastructure and environmental work for an NGO evidence library. "
     "Describe only what is visible; do not guess outcomes, dates, places or quantities. "
     "Return JSON with: caption (one factual sentence), activity_type (the work this photo documents), "
     "signals (visible conditions from the allowed list only), tags (up to 10 short lowercase keywords), "

@@ -2,7 +2,7 @@
 import streamlit as st
 
 from gt import db
-from gt.ui import SYNTHETIC_NOTE, any_synthetic, page_setup
+from gt.ui import demo_banner, page_setup
 
 page_setup("Overview")
 
@@ -25,8 +25,7 @@ c2.metric("Images", len(assets))
 c3.metric("Confirmed before/after pairs", len(confirmed))
 c4.metric("Analyses flagged for review", needs_review)
 
-if any_synthetic(assets):
-    st.warning(SYNTHETIC_NOTE, icon="🧪")
+demo_banner(assets)
 
 if not assets:
     st.warning("No seed data loaded yet. Add images to `seed/images/`, describe them in `seed/metadata.csv`, "

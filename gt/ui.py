@@ -6,9 +6,20 @@ import streamlit as st
 from gt import config, db, seed
 
 AI_BADGE = "🤖 AI-suggested"
-SYNTHETIC_BADGE = ":orange-badge[🧪 Synthetic demo data]"
-SYNTHETIC_NOTE = ("Seed images are **synthetic, computer-generated demo data**. Their locations and dates are "
-                  "**fictional**, generated for demonstration. Nothing here is evidence of real-world change.")
+AI_IMAGE_BADGE = ":orange-badge[🧪 AI-generated / edited image]"
+REAL_PHOTO_BADGE = ":blue-badge[📷 Real photo]"
+DEMO_META_BADGE = ":gray-badge[📍 Demo location & date]"
+
+
+def dataset_note() -> str | None:
+    """Seed-level provenance note (seed/dataset.json), shown wherever demo data appears."""
+    return db.get_meta("dataset_note") or None
+
+
+def demo_banner(assets=None) -> None:
+    note = dataset_note()
+    if note and (assets is None or any(a.get("source") == "seed" for a in assets)):
+        st.warning(note, icon="🧪")
 
 
 @st.cache_resource(show_spinner="Loading evidence database…")
@@ -28,19 +39,28 @@ def page_setup(title: str, icon: str = "🌱") -> None:
         else:
             st.warning("**Live mode, not configured.** Set CLOUDINARY_URL and GEMINI_API_KEY "
                        "to enable uploads.", icon="⚠️")
-        if db.get_meta("synthetic") == "1":
-            st.warning("🧪 **Synthetic demo data.** Computer-generated images; locations and dates are fictional.")
+        if dataset_note():
+            body = dataset_note().split(": ", 1)[-1]
+            st.warning("🧪 **Demo dataset.** " + body[:1].upper() + body[1:])
         st.caption(f"Data: {status}")
 
 
+def _badges(a: dict) -> str:
+    out = [AI_IMAGE_BADGE if a.get("synthetic") else (REAL_PHOTO_BADGE if dataset_note() else "")]
+    if "fictional" in (a.get("metadata_source") or ""):
+        out.append(DEMO_META_BADGE)
+    return " ".join(b for b in out if b)
+
+
 def synthetic_badge(*assets: dict) -> None:
-    """Visible badge whenever any of the given assets is synthetic."""
-    if any(a and a.get("synthetic") for a in assets):
-        st.markdown(SYNTHETIC_BADGE)
-
-
-def any_synthetic(assets) -> bool:
-    return any(a.get("synthetic") for a in assets)
+    """Provenance badges: real photo vs AI-generated/edited, and demo (fictional) location/date."""
+    assets = [a for a in assets if a]
+    if len(assets) == 2:
+        line = f"Before: {_badges(assets[0])} · After: {_badges(assets[1])}"
+    else:
+        line = " ".join(_badges(a) for a in assets)
+    if line.strip(" ·:BeforAt"):
+        st.markdown(line)
 
 
 def ai_label(text: str) -> None:

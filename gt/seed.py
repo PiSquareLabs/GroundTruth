@@ -102,6 +102,7 @@ def load_into_db(data: dict) -> None:
     if data.get("report"):
         db.set_meta("report", json.dumps(data["report"]))
     db.set_meta("synthetic", "1" if data.get("synthetic") else "0")
+    db.set_meta("dataset_note", data.get("dataset_note") or "")
     if data.get("cloud_name"):
         db.set_meta("cloud_name", data["cloud_name"])
 

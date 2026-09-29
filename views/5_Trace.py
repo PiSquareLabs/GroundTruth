@@ -2,7 +2,7 @@
 import streamlit as st
 
 from gt import db, media, trust
-from gt.ui import AI_BADGE, SYNTHETIC_NOTE, page_setup
+from gt.ui import AI_BADGE, demo_banner, page_setup, synthetic_badge
 
 page_setup("Trace", "🧾")
 st.title("🧾 Traceability")
@@ -27,8 +27,8 @@ with left:
         st.warning(flag, icon="⚠️")
 
 with right:
-    if a.get("synthetic"):
-        st.warning(SYNTHETIC_NOTE, icon="🧪")
+    demo_banner([a])
+    synthetic_badge(a)
     st.subheader("1 · Original asset")
     orig = media.original_url(a)
     st.markdown(f"- **Cloudinary public_id:** `{a.get('public_id') or 'not uploaded'}`\n"
@@ -41,9 +41,10 @@ with right:
     st.subheader("2 · Capture metadata")
     gps = "missing" if a.get("lat") is None else f"{a['lat']:.6f}, {a['lng']:.6f}"
     lines = [f"- **Captured:** {a.get('captured_at') or 'missing'}", f"- **GPS:** {gps}",
-             f"- **Metadata source:** {a.get('metadata_source') or 'EXIF'}"]
+             f"- **Metadata source:** {a.get('metadata_source') or 'EXIF'}",
+             f"- **Image provenance:** {'AI-generated or edited' if a.get('synthetic') else 'photo'}"]
     if a.get("role"):
-        lines.append(f"- **Dataset role (synthetic design label, not AI output):** {a['role']}")
+        lines.append(f"- **Dataset role (maintainer label, not AI output):** {a['role']}")
     st.markdown("\n".join(lines))
     st.caption("Raw EXIF found in the file:")
     st.json(a.get("exif_json") or {}, expanded=False)
