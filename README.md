@@ -2,7 +2,7 @@
 
 **AI-organized before/after field evidence and traceable impact reports for NGOs, built on Cloudinary.**
 
-**Live Demo:** _coming soon (deployment in progress)_ · **Demo video:** _coming soon_
+**Live Demo:** [https://ground-truth-cloudinary-n3i564mqhcg87ltuqrqprw.streamlit.app](https://ground-truth-cloudinary-n3i564mqhcg87ltuqrqprw.streamlit.app) · **Demo video:** _coming soon_
 
 > 🧪 **About the demo dataset.** The **before** photos are real photos; the **after** images are **AI-generated or edited**
 > illustrations of the intended repair. Locations (Kochi, Kerala) and dates are **fictional**, assigned for the demo.
@@ -148,7 +148,7 @@ Locally these come from `.env`; on Streamlit Cloud, from **Secrets** (see `.stre
 
 ## Deployment
 
-**Primary: Streamlit Community Cloud.** Main file `app.py`, Python 3.11, secret `DEMO_MODE = "true"` (optionally `GEMINI_API_KEY`).
+**Primary: Streamlit Community Cloud** (live at the URL above). Main file `app.py`, Python 3.11, secrets `DEMO_MODE = "true"` and `GEMINI_API_KEY` (optional; enables semantic query search). No Cloudinary secret is needed for the read-only demo. Free apps sleep when idle; the first visit can take ~30 s to wake.
 **Fallback: Hugging Face Space (Docker SDK).** Use `hf_space/Dockerfile` and `hf_space/README.md` (Space metadata). HF no longer offers the native Streamlit SDK for new Spaces, so Docker is used.
 
 ## Responsible AI
