@@ -1,0 +1,26 @@
+[
+  {
+    "id": "exposed-electrical-cable-repair-kakkanad",
+    "name": "Exposed electrical cable repair, Kakkanad",
+    "description": "Loose cables at a wall base routed into a junction box and conduit.",
+    "location_name": "Kakkanad, Kochi (fictional site)"
+  },
+  {
+    "id": "broken-gutter-cover-replacement-edappally",
+    "name": "Broken gutter cover replacement, Edappally",
+    "description": "Collapsed concrete gutter slabs replaced with a new cover.",
+    "location_name": "Edappally, Kochi (fictional site)"
+  },
+  {
+    "id": "loose-wiring-rerouted-into-conduit-vyttila",
+    "name": "Loose wiring rerouted into conduit, Vyttila",
+    "description": "Tangled external wiring bundled into wall-mounted conduit.",
+    "location_name": "Vyttila, Kochi (fictional site)"
+  },
+  {
+    "id": "overgrown-utility-hatch-restored-fort-kochi",
+    "name": "Overgrown utility hatch restored, Fort Kochi",
+    "description": "Rusted, overgrown utility hatch replaced with a new checker-plate cover.",
+    "location_name": "Fort Kochi (fictional site)"
+  }
+]

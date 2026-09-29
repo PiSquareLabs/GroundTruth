@@ -1,5 +1,3 @@
 filename,project,captured_at,lat,lng,role,synthetic
-drain_before_01.jpg,Drain Cleaning Ward 12,2026-05-10 09:15,12.971600,77.594600,before,true
-drain_after_01.jpg,Drain Cleaning Ward 12,2026-05-24 10:05,12.971650,77.594640,after,true
-drain_after_01_copy.jpg,Drain Cleaning Ward 12,2026-05-24 10:06,12.971650,77.594640,duplicate,true
-lakeside_filler_01.jpg,Tree Planting Lakeside,2026-06-02 08:30,,,filler,true
+site_a_before.jpg,Footpath repair Site A,2026-08-01 09:00,9.981600,76.299900,before,false
+site_a_after.jpg,Footpath repair Site A,2026-08-05 16:30,9.981600,76.299900,after,true

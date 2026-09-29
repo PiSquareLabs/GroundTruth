@@ -1,16 +1,9 @@
 filename,project,captured_at,lat,lng,role,synthetic
-drain_before_01.jpg,Drain Cleaning Ward 12,2026-05-10 09:15,12.971600,77.594600,before,true
-drain_after_01.jpg,Drain Cleaning Ward 12,2026-05-24 10:05,12.971650,77.594640,after,true
-drain_after_01_copy.jpg,Drain Cleaning Ward 12,2026-05-24 10:06,12.971650,77.594640,duplicate,true
-drain_before_02.jpg,Drain Cleaning Ward 12,2026-05-11 08:40,12.974900,77.598300,before,true
-drain_after_02.jpg,Drain Cleaning Ward 12,2026-05-26 09:20,12.974930,77.598270,after,true
-drain_signboard.jpg,Drain Cleaning Ward 12,2026-05-10 08:55,12.971420,77.594380,filler,true
-lakeside_before_01.jpg,Tree Planting Lakeside,2026-06-02 07:50,12.956200,77.612400,before,true
-lakeside_after_01.jpg,Tree Planting Lakeside,2026-07-14 08:10,12.956230,77.612440,after,true
-lakeside_after_01_late.jpg,Tree Planting Lakeside,2026-09-01 08:30,12.956210,77.612420,after,true
-lakeside_before_02.jpg,Tree Planting Lakeside,2026-06-03 08:05,12.958900,77.615100,before,true
-lakeside_after_02.jpg,Tree Planting Lakeside,2026-07-15 07:45,12.958880,77.615130,after,true
-lakeside_nursery.jpg,Tree Planting Lakeside,,,,filler,true
-park_before_01.jpg,Park Clean-up Riverside,2026-08-03 16:30,12.989100,77.571800,before,true
-park_after_01.jpg,Park Clean-up Riverside,2026-08-03 18:40,12.989120,77.571830,after,true
-park_after_01_offsite.jpg,Park Clean-up Riverside,2026-08-04 09:00,,,after,true
+electrical_cable_before.jpg,Exposed electrical cable repair Kakkanad,2026-08-04 10:20,10.015900,76.341900,before,false
+electrical_cable_after.jpg,Exposed electrical cable repair Kakkanad,2026-08-08 15:40,10.015900,76.341900,after,true
+gutter_cover_before.jpg,Broken gutter cover replacement Edappally,2026-08-11 09:05,10.026100,76.308400,before,false
+gutter_cover_after.jpg,Broken gutter cover replacement Edappally,2026-08-17 11:30,10.026100,76.308400,after,true
+wiring_before.jpg,Loose wiring rerouted into conduit Vyttila,2026-08-19 16:10,9.967400,76.318300,before,false
+wiring_after.png,Loose wiring rerouted into conduit Vyttila,2026-08-23 10:45,9.967400,76.318300,after,true
+utility_hatch_before.jpg,Overgrown utility hatch restored Fort Kochi,2026-09-01 08:50,9.965800,76.242100,before,false
+utility_hatch_after.jpg,Overgrown utility hatch restored Fort Kochi,2026-09-06 09:15,9.965800,76.242100,after,true

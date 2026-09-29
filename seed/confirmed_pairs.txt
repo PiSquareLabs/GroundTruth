@@ -1,0 +1,6 @@
+# Before/after pairs confirmed by the maintainer (the maintainer supplied each before/after as a pair).
+# The "after" images are AI-generated/edited: a confirmed pair shows visible difference, not a verified repair.
+exposed-electrical-cable-repair-kakkanad-electrical-cable-before exposed-electrical-cable-repair-kakkanad-electrical-cable-after
+broken-gutter-cover-replacement-edappally-gutter-cover-before broken-gutter-cover-replacement-edappally-gutter-cover-after
+loose-wiring-rerouted-into-conduit-vyttila-wiring-before loose-wiring-rerouted-into-conduit-vyttila-wiring-after
+overgrown-utility-hatch-restored-fort-kochi-utility-hatch-before overgrown-utility-hatch-restored-fort-kochi-utility-hatch-after
