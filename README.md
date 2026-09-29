@@ -181,6 +181,7 @@ Locally these come from `.env`; on Streamlit Cloud, from **Secrets** (see `.stre
 - The demo database is temporary and shared per container; live-mode data is lost when a Cloud container restarts.
 - Pairing compares all images with the same activity type (O(n²)). That's fine for hundreds of images, not tens of thousands.
 - HEIC photos must be converted to JPEG before seeding or upload.
+- Photos without EXIF date/GPS can only be paired if the uploader enters a date and location on the Upload page (the page asks for any that are missing).
 - Free Streamlit Cloud apps sleep when idle; the first load can take ~30 s.
 
 ## Screenshots

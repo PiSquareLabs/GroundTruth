@@ -1,6 +1,7 @@
 """Upload + live analysis (disabled in demo mode)."""
 import io
 import re
+from datetime import datetime
 
 import streamlit as st
 
@@ -30,6 +31,25 @@ if pid == "__new__":
 
 files = st.file_uploader("Photos (JPEG/PNG/WebP)", type=["jpg", "jpeg", "png", "webp"], accept_multiple_files=True)
 
+# Capture date and location come from EXIF when present; otherwise the uploader can enter them.
+# Pair suggestions need both (location proximity + time ordering), so missing values are asked for here.
+entered: dict[str, dict] = {}
+if files:
+    st.markdown("**Capture date and location** (read from the photo when available; fill in what's missing)")
+    for f in files:
+        meta = exif.extract(io.BytesIO(f.getvalue()))
+        c0, c1, c2, c3, c4 = st.columns([2, 1.2, 1, 1.1, 1.1])
+        c0.caption(f"**{f.name}**  \n" + ("date from photo" if meta["captured_at"] else "no date in photo") + " · "
+                   + ("GPS from photo" if meta["lat"] is not None else "no GPS in photo"))
+        k = f.name
+        d = c1.date_input("Date", value=None, key=f"d_{k}", disabled=bool(meta["captured_at"]), format="YYYY-MM-DD")
+        t = c2.time_input("Time", value=None, key=f"t_{k}", disabled=bool(meta["captured_at"]), step=300)
+        lat = c3.number_input("Latitude", value=None, min_value=-90.0, max_value=90.0, format="%.6f",
+                              key=f"la_{k}", disabled=meta["lat"] is not None)
+        lng = c4.number_input("Longitude", value=None, min_value=-180.0, max_value=180.0, format="%.6f",
+                              key=f"lo_{k}", disabled=meta["lat"] is not None)
+        entered[k] = {"date": d, "time": t, "lat": lat, "lng": lng}
+
 if st.button("Upload and analyze", type="primary", disabled=not files):
     if pid == "__new__":
         if not new_name.strip():
@@ -45,6 +65,15 @@ if st.button("Upload and analyze", type="primary", disabled=not files):
         aid = f"{pid}-{stem}"
         with st.status(f"{f.name}", expanded=False) as s:
             meta = exif.extract(io.BytesIO(data))
+            e = entered.get(f.name, {})
+            sources = ["EXIF"] if (meta["captured_at"] or meta["lat"] is not None) else []
+            if not meta["captured_at"] and e.get("date"):
+                t = e.get("time") or datetime.min.time()
+                meta["captured_at"] = datetime.combine(e["date"], t).isoformat()
+                sources.append("date entered by uploader")
+            if meta["lat"] is None and e.get("lat") is not None and e.get("lng") is not None:
+                meta["lat"], meta["lng"] = e["lat"], e["lng"]
+                sources.append("location entered by uploader")
             res = media.upload(data, public_id=stem, project_id=pid)
             db.upsert("assets", {
                 "id": aid, "project_id": pid, "filename": f.name, "public_id": res["public_id"],
@@ -52,6 +81,7 @@ if st.button("Upload and analyze", type="primary", disabled=not files):
                 "bytes": res.get("bytes"), "format": res.get("format"), "uploaded_at": res.get("created_at"),
                 "captured_at": meta["captured_at"], "lat": meta["lat"], "lng": meta["lng"],
                 "exif_json": meta["exif"], "source": "upload", "dhash": trust.dhash(io.BytesIO(data)),
+                "metadata_source": ", ".join(sources) or "none",
             })
             try:
                 an = analysis.analyze(data, f.type or "image/jpeg")
