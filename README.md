@@ -85,8 +85,8 @@ Four civic-infrastructure repairs in Kochi, Kerala, one before/after pair each:
 | Loose wiring rerouted into conduit | Vyttila | 2026-08-19 → 2026-08-23 (3 days) |
 | Overgrown utility hatch restored | Fort Kochi | 2026-09-01 → 2026-09-06 (5 days) |
 
-- **Provenance per image.** The *before* images are real photos. The *after* images are AI-generated or edited (`synthetic=true` in [`seed/metadata.csv`](seed/metadata.csv)). The app shows a **📷 Real photo** or **🧪 AI-generated / edited image** badge on every asset, search result and pair, and a **📍 Demo location & date** badge because the metadata is assigned.
-- **Dataset note.** [`seed/dataset.json`](seed/dataset.json) holds one note that appears on every page, as the fixed opening of the report summary, in the HTML export, and (shortened) on campaign cards.
+- **Provenance per image.** The *before* images are real photos. The *after* images are AI-generated or edited (`synthetic=true` in [`seed/metadata.csv`](seed/metadata.csv)).
+- **How the app discloses it.** One short line in the sidebar on every page. Each image's **Trace** page shows its full provenance (real photo vs AI-generated/edited, and the metadata source). Exported reports and campaign cards carry a small "illustrative demo" footer. The full note lives in [`seed/dataset.json`](seed/dataset.json).
 - **Locations and dates** come from `metadata.csv`, not from the files, which carry no EXIF. Each pair shares one location; each site is a different part of Kochi.
 - **Sources** for each file are in [`seed/SOURCES.md`](seed/SOURCES.md).
 - **Confirmed pairs** were supplied as pairs by the maintainer (`seed/confirmed_pairs.txt`). Because the *after* images are AI-generated/edited, a confirmed pair shows a visible difference only. It is never presented as a verified repair.

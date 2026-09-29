@@ -40,8 +40,8 @@ def page_setup(title: str, icon: str = "🌱") -> None:
             st.warning("**Live mode, not configured.** Set CLOUDINARY_URL and GEMINI_API_KEY "
                        "to enable uploads.", icon="⚠️")
         if dataset_note():
-            body = dataset_note().split(": ", 1)[-1]
-            st.warning("🧪 **Demo dataset.** " + body[:1].upper() + body[1:])
+            st.caption("🧪 Demo dataset: after images AI-edited; sites & dates illustrative. "
+                       "Details on each image's Trace page.")
         st.caption(f"Data: {status}")
 
 

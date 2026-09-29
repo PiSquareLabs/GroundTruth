@@ -4,7 +4,7 @@ from datetime import date
 import streamlit as st
 
 from gt import db, media, trust
-from gt.ui import AI_BADGE, demo_banner, page_setup, synthetic_badge
+from gt.ui import AI_BADGE, page_setup
 
 page_setup("Assets", "🗂️")
 st.title("🗂️ Evidence library")
@@ -14,7 +14,6 @@ if not assets:
     st.warning("No images loaded yet.")
     st.stop()
 
-demo_banner(assets)
 
 projects = {p["id"]: p["name"] for p in db.projects()}
 activities = sorted({a["activity_type"] for a in assets if a.get("activity_type")})
@@ -65,7 +64,6 @@ for pid in [p for p in projects if any(a["project_id"] == p for a in shown)]:
         with cols[i % 4]:
             with st.container(border=True):
                 st.image(media.url_for(a, "thumb", blur_faces=blur and bool(a.get("people_present"))), width="stretch")
-                synthetic_badge(a)
                 st.markdown(f"**{(a.get('activity_type') or 'unclassified').replace('_', ' ')}** · "
                             f"{(a.get('captured_at') or 'no date')[:10]}")
                 if a.get("caption"):

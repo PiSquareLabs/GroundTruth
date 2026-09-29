@@ -4,7 +4,7 @@ import streamlit.components.v1 as components
 from streamlit_image_comparison import image_comparison
 
 from gt import config, db, media, report
-from gt.ui import AI_BADGE, demo_banner, page_setup, synthetic_badge
+from gt.ui import AI_BADGE, page_setup
 
 page_setup("Report", "📄")
 st.title("📄 Impact report")
@@ -17,7 +17,6 @@ if not f["image_count"]:
     st.stop()
 assets = db.assets(None if scope == report.ALL else scope)
 
-demo_banner(assets)
 
 c1, c2, c3 = st.columns(3)
 c1.metric("Images", f["image_count"])
@@ -42,7 +41,9 @@ if is_ai:
                f"`{summary.get('model')}` · {summary.get('generated_at')}")
 else:
     st.caption("Template summary (no AI). " + ("A cached AI summary is not available for this scope." if config.DEMO_MODE else ""))
-st.markdown(summary["text"])
+st.markdown(report.strip_disclaimer(summary["text"]))
+if report.disclaimer():
+    st.caption(report.SHORT_NOTE)
 if summary.get("citation_issues"):
     st.error("This AI summary cites asset ids that do not exist in the evidence: "
              + ", ".join(f"`{i}`" for i in summary["citation_issues"]) + ". Treat those sentences as unreliable.")
@@ -61,7 +62,6 @@ if not f["confirmed_pairs"]:
 for p in f["confirmed_pairs"]:
     b, a = by_id[p["before"]["id"]], by_id[p["after"]["id"]]
     blur = bool(b.get("people_present") or a.get("people_present"))
-    synthetic_badge(b, a)
     st.markdown(f"**{b.get('project_name')}** · {p['before']['date'] or '?'} → {p['after']['date'] or '?'} · "
                 f"`{b['id']}` → `{a['id']}`")
     try:
