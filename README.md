@@ -129,8 +129,9 @@ pytest -q                   # pair scoring, JSON-parse fallback, duplicate detec
 | `GEMINI_EMBED_MODEL` | `gemini-embedding-001` | 768-dim embeddings |
 | `PAIR_W_LOCATION` / `PAIR_W_VISUAL` / `PAIR_W_TIME` | `0.4` / `0.4` / `0.2` | Pair score weights |
 | `LOCATION_SCALE_M` | `150` | Distance (m) at which location proximity = 0.5 |
-| `PAIR_MIN_SCORE` | `0.5` | Minimum score to suggest a pair |
-| `DUPLICATE_THRESHOLD` | `0.97` | Embedding cosine above which images are flagged as near-duplicates |
+| `PAIR_MIN_SCORE` | `0.75` | Minimum score to suggest a pair |
+| `DUPLICATE_HASH_BITS` | `32` | Max differing bits (of 256) in the pixel perceptual hash to flag a near-duplicate |
+| `DUPLICATE_THRESHOLD` | `0.97` | Embedding-cosine fallback for images without a pixel hash |
 | `DB_PATH` / `SEED_DIR` | `data/ground_truth.db` / `seed` | Storage locations |
 
 Locally these come from `.env`; on Streamlit Cloud, from **Secrets** (see `.streamlit/secrets.toml.example`). Real keys are never committed (`.env` and `secrets.toml` are git-ignored).
@@ -146,7 +147,7 @@ Locally these come from `.env`; on Streamlit Cloud, from **Secrets** (see `.stre
 - The report summary is generated **only from stored facts** (the exact facts JSON is shown on the page). Counts and dates on the report are computed by code, not the model.
 - The wording is deliberately limited to **"visible difference between confirmed paired images"**. The app never claims verified environmental improvement.
 - Pairs are **suggested, never auto-confirmed**; a person decides.
-- **Near-duplicates** (embedding similarity ≥ threshold) are flagged, including inside pair review.
+- **Near-duplicates** are flagged using a perceptual hash of the pixels (caption embeddings were too coarse: two different drains got near-identical captions), including inside pair review.
 - **Metadata checks:** no GPS, no capture date, capture date after upload date.
 - **People:** the model reports whether people are visible; those images are flagged and delivered with Cloudinary's `e_blur_faces` transformation. The original is never modified.
 
@@ -156,7 +157,7 @@ Locally these come from `.env`; on Streamlit Cloud, from **Secrets** (see `.stre
 - The demo DB is rebuilt from the committed seed file on start, because Streamlit Cloud's disk is temporary.
 - "Visual similarity" in pair scoring is the cosine similarity of **embeddings of AI captions + tags + signals** (a semantic proxy), not pixel comparison.
 - Missing GPS in the same project gives a neutral location score (0.5); a missing date gives a neutral time score (0.5).
-- Pairs are only suggested within one project.
+- Pairs are only suggested within one project, but the activity type does not have to match: a “before” photo (bare soil, litter) often doesn't show the activity yet.
 - For seed data, `metadata.csv` overrides EXIF (synthetic images have no real EXIF). Uploads in live mode use EXIF.
 - HTML report export instead of server-side PDF (no extra native dependencies; print to PDF from the browser).
 - Demo-mode review decisions are stored in the browser session, not the shared DB.

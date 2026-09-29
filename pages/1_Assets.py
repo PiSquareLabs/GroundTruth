@@ -55,8 +55,8 @@ st.caption(f"Showing {len(shown)} of {len(assets)} images")
 dupes = trust.find_duplicates(assets)
 if dupes:
     with st.expander(f"⚠️ {len(dupes)} possible near-duplicate pair(s)"):
-        for x, y, s in dupes:
-            st.write(f"`{x}` ↔ `{y}` — embedding similarity {s:.3f}")
+        for x, y, s, how in dupes:
+            st.write(f"`{x}` ↔ `{y}` — {how} similarity {s:.3f}")
 
 for pid in [p for p in projects if any(a["project_id"] == p for a in shown)]:
     group = [a for a in shown if a["project_id"] == pid]

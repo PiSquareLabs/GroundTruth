@@ -56,10 +56,11 @@ PAIR_WEIGHTS = {
     "time": float(get("PAIR_W_TIME", "0.2")),
 }
 LOCATION_SCALE_M = float(get("LOCATION_SCALE_M", "150"))  # distance where proximity = 0.5
-PAIR_MIN_SCORE = float(get("PAIR_MIN_SCORE", "0.5"))
+PAIR_MIN_SCORE = float(get("PAIR_MIN_SCORE", "0.75"))
 
 # --- trust checks -----------------------------------------------------------------
-DUPLICATE_THRESHOLD = float(get("DUPLICATE_THRESHOLD", "0.97"))
+DUPLICATE_HASH_BITS = int(get("DUPLICATE_HASH_BITS", "32"))  # max differing bits of 256 (pixel hash)
+DUPLICATE_THRESHOLD = float(get("DUPLICATE_THRESHOLD", "0.97"))  # embedding fallback when no pixel hash
 
 
 def cloudinary_ready() -> bool:

@@ -36,7 +36,7 @@ def decide(p: dict, s: str) -> None:
         db.set_pair_status(p["id"], s)
 
 
-dupe_keys = {frozenset((x, y)) for x, y, _ in trust.find_duplicates(list(assets.values()))}
+dupe_keys = {frozenset((x, y)) for x, y, *_ in trust.find_duplicates(list(assets.values()))}
 all_pairs = [p for p in db.pairs() if p["before_id"] in assets and p["after_id"] in assets]
 groups = {s: [p for p in all_pairs if status(p) == s] for s in ("suggested", "confirmed", "rejected")}
 # A segmented control (not st.tabs) so the slider is rendered only when visible and sizes correctly.

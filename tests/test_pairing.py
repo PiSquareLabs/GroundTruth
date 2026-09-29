@@ -42,13 +42,20 @@ def test_haversine_known_distance():
     assert haversine_m(0, 0, 0, 1) == pytest.approx(111_195, rel=1e-3)
 
 
-def test_suggest_orders_by_time_and_skips_other_activities():
+def test_suggest_orders_by_time():
     later = asset("later", t="2026-06-20T09:00:00")
     earlier = asset("earlier")
-    other = asset("trees", act="tree_planting")
-    out = suggest([later, earlier, other], min_score=0.5)
+    out = suggest([later, earlier], min_score=0.5)
     assert len(out) == 1
     assert out[0]["before_id"] == "earlier" and out[0]["after_id"] == "later"
+
+
+def test_suggest_pairs_across_activity_types_in_same_project():
+    # a "before" photo (bare soil) is often classified differently from the "after" (saplings)
+    before = asset("before", act="other")
+    after = asset("after", t="2026-06-20T09:00:00", act="tree_planting")
+    out = suggest([before, after], min_score=0.5)
+    assert [(p["before_id"], p["after_id"]) for p in out] == [("before", "after")]
 
 
 def test_suggest_never_pairs_across_projects():

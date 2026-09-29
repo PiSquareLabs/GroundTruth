@@ -58,6 +58,7 @@ def load_into_db(data: dict) -> None:
                 "source": a.get("source", "seed"),
                 "metadata_source": a.get("metadata_source") or "EXIF",
                 "role": a.get("role"),
+                "dhash": a.get("dhash"),
                 "synthetic": int(bool(a.get("synthetic", data.get("synthetic", False)))),
             },
         )

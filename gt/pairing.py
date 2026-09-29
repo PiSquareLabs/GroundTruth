@@ -77,13 +77,13 @@ def order(a: dict, b: dict) -> tuple[dict, dict]:
 
 
 def suggest(assets: list[dict], min_score: float | None = None) -> list[dict]:
-    """Score candidate pairs in the same project with the same activity type; keep those above min_score."""
+    """Score candidate pairs within the same project; keep those above min_score."""
     min_score = config.PAIR_MIN_SCORE if min_score is None else min_score
     out = []
     for x, y in combinations(assets, 2):
-        if not x.get("activity_type") or x.get("activity_type") != y.get("activity_type"):
-            continue
-        if x.get("project_id") != y.get("project_id"):  # before/after only within one project
+        # Same project only. Activity type is NOT required to match: a "before" photo (bare soil,
+        # litter) often doesn't show the activity yet, so the model may classify it differently.
+        if not x.get("project_id") or x.get("project_id") != y.get("project_id"):
             continue
         before, after = order(x, y)
         s, bd = score_pair(before, after)

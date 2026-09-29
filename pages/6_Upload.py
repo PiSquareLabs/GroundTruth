@@ -4,7 +4,7 @@ import re
 
 import streamlit as st
 
-from gt import analysis, config, db, exif, media, pairing
+from gt import analysis, config, db, exif, media, pairing, trust
 from gt.ui import page_setup
 
 page_setup("Upload", "⬆️")
@@ -51,7 +51,7 @@ if st.button("Upload and analyze", type="primary", disabled=not files):
                 "url": res["secure_url"], "local_path": None, "width": res.get("width"), "height": res.get("height"),
                 "bytes": res.get("bytes"), "format": res.get("format"), "uploaded_at": res.get("created_at"),
                 "captured_at": meta["captured_at"], "lat": meta["lat"], "lng": meta["lng"],
-                "exif_json": meta["exif"], "source": "upload",
+                "exif_json": meta["exif"], "source": "upload", "dhash": trust.dhash(io.BytesIO(data)),
             })
             try:
                 an = analysis.analyze(data, f.type or "image/jpeg")

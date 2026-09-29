@@ -30,7 +30,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from PIL import Image, ImageOps  # noqa: E402
 
-from gt import analysis, config, exif, media, pairing, seed  # noqa: E402
+from gt import analysis, config, exif, media, pairing, seed, trust  # noqa: E402
 
 EXTS = {".jpg", ".jpeg", ".png", ".webp"}  # convert HEIC to JPEG first
 ROLES = {"before", "after", "filler", "duplicate"}
@@ -173,7 +173,7 @@ def main() -> None:
             lat=parse_float(r.get("lat")) if r.get("lat") else meta["lat"],
             lng=parse_float(r.get("lng")) if r.get("lng") else meta["lng"],
             exif=meta["exif"], metadata_source="seed/metadata.csv (fictional)",
-            role=r["role"], synthetic=truthy(r.get("synthetic"), default=True),
+            role=r["role"], synthetic=truthy(r.get("synthetic"), default=True), dhash=trust.dhash(f),
         )
         if not rec["synthetic"]:
             print(f"  ! {aid}: synthetic=false in metadata.csv; seed images are expected to be synthetic")

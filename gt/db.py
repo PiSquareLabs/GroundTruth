@@ -35,7 +35,8 @@ CREATE TABLE IF NOT EXISTS assets (
     source TEXT,
     metadata_source TEXT,
     role TEXT,
-    synthetic INTEGER DEFAULT 0
+    synthetic INTEGER DEFAULT 0,
+    dhash TEXT
 );
 CREATE TABLE IF NOT EXISTS analyses (
     asset_id TEXT PRIMARY KEY REFERENCES assets(id),
@@ -99,7 +100,7 @@ def init_schema() -> None:
         c.executescript(SCHEMA)
         # lightweight migration: add columns introduced after a DB was created
         have = {r["name"] for r in c.execute("PRAGMA table_info(assets)")}
-        for col, typ in (("metadata_source", "TEXT"), ("role", "TEXT"), ("synthetic", "INTEGER DEFAULT 0")):
+        for col, typ in (("metadata_source", "TEXT"), ("role", "TEXT"), ("synthetic", "INTEGER DEFAULT 0"), ("dhash", "TEXT")):
             if col not in have:
                 c.execute(f"ALTER TABLE assets ADD COLUMN {col} {typ}")
 
