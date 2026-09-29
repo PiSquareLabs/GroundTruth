@@ -450,7 +450,7 @@ def main() -> None:
         if p.exists() and not args.force:
             sys.exit(f"{p} exists; pass --force to overwrite")
     with meta.open("w", newline="", encoding="utf-8") as fh:
-        wr = csv.writer(fh)
+        wr = csv.writer(fh, lineterminator="\n")
         wr.writerow(["filename", "project", "captured_at", "lat", "lng", "role", "synthetic"])
         for fname, project, cap, lat, lng, role, *_ in SHOTS:
             fmt = (lambda v: f"{v:.6f}" if isinstance(v, float) else v)
