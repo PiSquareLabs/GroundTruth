@@ -18,8 +18,13 @@ def _client():
     if not config.ai_ready():
         raise RuntimeError("AI provider not configured (set AI_PROVIDER=gemini and GEMINI_API_KEY).")
     from google import genai
+    from google.genai import types
 
-    return genai.Client(api_key=config.GEMINI_API_KEY)
+    # Fail fast (60 s timeout, no hidden SDK retries): _generate() does its own retry + model fallback.
+    return genai.Client(
+        api_key=config.GEMINI_API_KEY,
+        http_options=types.HttpOptions(timeout=60_000, retry_options=types.HttpRetryOptions(attempts=1)),
+    )
 
 
 def _generate(contents, gen_config) -> tuple[str, str]:
@@ -40,6 +45,9 @@ def _generate(contents, gen_config) -> tuple[str, str]:
                 if e.code not in RETRYABLE:
                     raise
                 time.sleep(2 * (attempt + 1))
+            except Exception as e:  # timeouts / connection errors: move on to the next model
+                last = e
+                break
     raise last
 
 

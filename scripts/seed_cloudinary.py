@@ -121,6 +121,7 @@ def main() -> None:
     ap.add_argument("--confirm-by-role", action="store_true",
                     help="reviewer shortcut: confirm suggested pairs whose CSV roles are before->after in one project")
     args = ap.parse_args()
+    sys.stdout.reconfigure(line_buffering=True, encoding="utf-8")
 
     if not config.cloudinary_ready():
         sys.exit("CLOUDINARY_URL is not set (see .env.example).")
@@ -186,6 +187,8 @@ def main() -> None:
             flag = " (needs review)" if rec["analysis"].get("needs_review") else ""
             print(f"  analyzed {aid}: {rec['analysis'].get('caption')}{flag}")
         assets.append(rec)
+        # checkpoint after each image so an interrupted run resumes without redoing work
+        seed.write_seed({**data, "assets": assets + [a for a in data["assets"] if a["id"] not in {x["id"] for x in assets}]})
 
     data["assets"] = assets
     update_sources([r["filename"] for r in manifest])
