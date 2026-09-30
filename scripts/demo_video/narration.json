@@ -1,0 +1,11 @@
+{
+ "intro": "NGOs have thousands of scattered field photos. When a funder asks, what changed?, someone digs through phones by hand. Ground Truth turns those photos into organized, traceable evidence, built on Cloudinary.",
+ "home": "The app follows four steps: collect, explore, review, and share. This demo has four projects, eight images, and four confirmed before-and-after pairs. And the banner says it upfront: the after images are AI-edited, and the sites and dates are illustrative.",
+ "library": "In the Evidence library, every photo is stored on Cloudinary and grouped by project. The AI wrote each caption and activity type, and they're labelled AI-suggested. These thumbnails are Cloudinary transformations: auto-crop, auto-quality, and auto-format. Filters narrow things down by project or photo type.",
+ "search": "Search lives right here. Let's type: tangled wires on a wall. With an AI key, this searches by meaning, not keywords. This recording runs the key-free demo, so it falls back to keyword and tag matching, and it tells you so. Either way, every result says why it matched. Now: damaged drain cover.",
+ "pairs": "On Review pairs, the system suggests before-and-after pairs from location, visual similarity, and time order. It never auto-confirms. A person decides. Here's the Vyttila wiring pair. Drag the slider to see the visible difference.",
+ "breakdown": "Here's the score breakdown, and the exact Cloudinary URLs behind the slider. The campaign card is a shareable image built entirely from Cloudinary overlays.",
+ "report": "The Impact report. The counts come from the data, not the AI. The summary is written only from stored facts, and every image it cites is checked to exist. This green check shows that. Here's the timeline, the evidence table, and one click downloads the report.",
+ "trace": "Finally, Trace, on a gutter image. The Cloudinary original. The capture date, location, and where that metadata came from. The full AI output and the model used. And the transformation chain: every Cloudinary URL the app delivered is logged.",
+ "outro": "Ground Truth flags near-duplicates and missing location or date, blurs faces on delivery, and never claims verified impact. It only shows the visible difference between confirmed pairs. In this demo, the after images are AI-edited and the sites are illustrative, and the app says so."
+}
