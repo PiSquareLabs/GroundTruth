@@ -1,6 +1,6 @@
 # 3-minute demo script
 
-The recorded video is [`ground-truth-demo.mp4`](ground-truth-demo.mp4) (2:41, 1080p, narrated, with burned-in
+The recorded video is [`ground-truth-demo.mp4`](ground-truth-demo.mp4) (2:59, 1080p, narrated by the ElevenLabs voice "Rahul Bharadwaj", with burned-in
 captions; [`ground-truth-demo.srt`](ground-truth-demo.srt) holds the same captions for YouTube and similar sites).
 The page names below match the current app: Home → Evidence library → Review pairs → Impact report → Trace an image.
 
