@@ -23,7 +23,7 @@ Ground Truth turns a pile of field photos into organized, searchable, **traceabl
 
 1. **Organize.** Every photo is stored on Cloudinary, grouped by project, and placed in time and space from its EXIF capture date and GPS.
 2. **Understand.** A vision model writes a factual caption, activity type, visible *signals* (standing water, litter, bare soil, saplings, fresh asphalt…) and tags, all labelled **AI-suggested**.
-3. **Search by meaning.** Semantic search over the caption and tag embeddings, and each result explains *why it matched*.
+3. **Search by meaning.** The Evidence library's search box runs semantic search over the caption and tag embeddings, and each result explains *why it matched*. The app is laid out as four steps (Collect → Explore → Review → Share) plus a Trace page, with a built-in tour and a "How this page works" help popover on every page.
 4. **Compare.** The app suggests before/after pairs using location, visual similarity and time. **A person confirms or rejects each one.** Confirmed pairs open in a comparison slider.
 5. **Report.** It builds an impact report whose summary is generated **only** from stored captions, tags, dates and confirmed pairs, with a timeline, sliders and an evidence table. The report downloads as print-ready HTML.
 6. **Trace.** Every image can be followed back to its original Cloudinary asset, EXIF, raw AI output, model name and every transformation used to deliver it.
