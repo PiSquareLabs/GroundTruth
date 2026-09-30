@@ -29,25 +29,37 @@ if not assets:
 projects = {p["id"]: p for p in db.projects()}
 dates = [date.fromisoformat(a["captured_at"][:10]) for a in assets if a.get("captured_at")]
 
+# The filter widgets live in a popover, whose browser-side widget values can outlast a reset done in a
+# callback and come back on the next rerun. So each reset moves them to fresh keys (lib_v) instead.
+st.session_state.setdefault("lib_v", 0)
+
+
+def fkey(name: str) -> str:
+    return f"{name}_{st.session_state.lib_v}"
+
+
+def reset_filters(chosen: list[str] = ()) -> None:
+    st.session_state.lib_v += 1
+    for pid in projects:
+        st.session_state[fkey(f"lib_p_{pid}")] = pid in chosen
+
+
 # A project chosen on Home arrives as lib_projects; turn it into the per-project checkbox state.
 if "lib_projects" in st.session_state:
-    chosen = st.session_state.pop("lib_projects")
-    for pid in projects:
-        st.session_state[f"lib_p_{pid}"] = pid in chosen
+    reset_filters(st.session_state.pop("lib_projects"))
 st.session_state.setdefault("lib_query", "")
-st.session_state.setdefault("lib_role", "All")
-st.session_state.setdefault("lib_undated", True)
-st.session_state.setdefault("lib_flagged", False)
+st.session_state.setdefault(fkey("lib_role"), "All")
+st.session_state.setdefault(fkey("lib_undated"), True)
+st.session_state.setdefault(fkey("lib_flagged"), False)
 st.session_state.setdefault("blur_faces", True)
+role = st.session_state[fkey("lib_role")]
+undated = st.session_state[fkey("lib_undated")]
+flagged = st.session_state[fkey("lib_flagged")]
 
 
 def clear_filters() -> None:
     st.session_state.lib_query = ""
-    st.session_state.lib_role = "All"
-    st.session_state.lib_undated = True
-    st.session_state.lib_flagged = False
-    for pid in projects:
-        st.session_state[f"lib_p_{pid}"] = False
+    reset_filters()
 
 
 def pick_example() -> None:
@@ -55,9 +67,8 @@ def pick_example() -> None:
         st.session_state.lib_query = st.session_state.lib_example
 
 
-sel_projects = [pid for pid in projects if st.session_state.get(f"lib_p_{pid}")]
-n_filters = (len(sel_projects) + (st.session_state.lib_role != "All") + (not st.session_state.lib_undated)
-             + st.session_state.lib_flagged)
+sel_projects = [pid for pid in projects if st.session_state.get(fkey(f"lib_p_{pid}"))]
+n_filters = len(sel_projects) + (role != "All") + (not undated) + flagged
 
 top_l, top_r = st.columns([5, 1], vertical_alignment="bottom")
 query = top_l.text_input("Search by describing a photo", key="lib_query", icon=":material/search:",
@@ -65,10 +76,10 @@ query = top_l.text_input("Search by describing a photo", key="lib_query", icon="
 with top_r.popover(f"Filters ({n_filters})" if n_filters else "Filters", icon=":material/tune:", width="stretch"):
     st.markdown("**Project**")
     for pid, p in projects.items():
-        st.checkbox(p["name"], key=f"lib_p_{pid}")
-    st.pills("Photo type", ["All", "Before", "After"], key="lib_role", required=True)
-    st.checkbox("Include images without a capture date", key="lib_undated")
-    st.checkbox("Only images with flags", key="lib_flagged")
+        st.checkbox(p["name"], key=fkey(f"lib_p_{pid}"))
+    st.pills("Photo type", ["All", "Before", "After"], key=fkey("lib_role"), required=True)
+    st.checkbox("Include images without a capture date", key=fkey("lib_undated"))
+    st.checkbox("Only images with flags", key=fkey("lib_flagged"))
     st.checkbox("Blur faces where people may appear", key="blur_faces",
                 help="Uses Cloudinary's e_blur_faces transformation on delivery; the original is not modified.")
 
@@ -79,11 +90,11 @@ blur = st.session_state.blur_faces
 def keep(a: dict) -> bool:
     if sel_projects and a["project_id"] not in sel_projects:
         return False
-    if st.session_state.lib_role != "All" and (a.get("role") or "").lower() != st.session_state.lib_role.lower():
+    if role != "All" and (a.get("role") or "").lower() != role.lower():
         return False
-    if not a.get("captured_at") and not st.session_state.lib_undated:
+    if not a.get("captured_at") and not undated:
         return False
-    if st.session_state.lib_flagged and not trust.metadata_flags(a):
+    if flagged and not trust.metadata_flags(a):
         return False
     return True
 
