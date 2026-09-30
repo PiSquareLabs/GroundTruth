@@ -18,3 +18,11 @@ data/
 
 # Maintainer's original photo drop (copied into seed/images/)
 /images/
+
+# Demo video build intermediates (scripts/demo_video)
+scripts/demo_video/frames/
+scripts/demo_video/*.wav
+scripts/demo_video/*.mp3
+scripts/demo_video/durations.json
+scripts/demo_video/timeline.json
+scripts/demo_video/frames.txt

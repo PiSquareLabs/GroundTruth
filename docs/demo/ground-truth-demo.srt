@@ -1,0 +1,163 @@
+1
+00:00:00,000 --> 00:00:03,075
+NGOs have thousands of scattered field photos.
+
+2
+00:00:03,075 --> 00:00:07,821
+When a funder asks, what changed?, someone digs through phones by hand.
+
+3
+00:00:07,821 --> 00:00:13,704
+Ground Truth turns those photos into organized, traceable evidence, built on Cloudinary.
+
+4
+00:00:14,105 --> 00:00:18,439
+The app follows four steps: collect, explore, review, and share.
+
+5
+00:00:18,439 --> 00:00:24,197
+This demo has four projects, eight images, and four confirmed before-and-after pairs.
+
+6
+00:00:24,197 --> 00:00:28,464
+And the banner says it upfront: the after images are AI-edited,
+
+7
+00:00:28,464 --> 00:00:31,241
+and the sites and dates are illustrative.
+
+8
+00:00:31,842 --> 00:00:37,665
+In the Evidence library, every photo is stored on Cloudinary and grouped by project.
+
+9
+00:00:37,665 --> 00:00:43,142
+The AI wrote each caption and activity type, and they're labelled AI-suggested.
+
+10
+00:00:43,142 --> 00:00:49,381
+These thumbnails are Cloudinary transformations: auto-crop, auto-quality, and auto-format.
+
+11
+00:00:49,381 --> 00:00:52,986
+Filters narrow things down by project or photo type.
+
+12
+00:00:54,511 --> 00:00:56,153
+Search lives right here.
+
+13
+00:00:56,153 --> 00:00:58,616
+Let's type: tangled wires on a wall.
+
+14
+00:00:58,616 --> 00:01:02,380
+With an AI key, this searches by meaning, not keywords.
+
+15
+00:01:02,380 --> 00:01:08,128
+This recording runs the key-free demo, so it falls back to keyword and tag matching,
+
+16
+00:01:08,128 --> 00:01:09,497
+and it tells you so.
+
+17
+00:01:09,497 --> 00:01:12,576
+Either way, every result says why it matched.
+
+18
+00:01:12,576 --> 00:01:14,287
+Now: damaged drain cover.
+
+19
+00:01:15,490 --> 00:01:21,947
+On Review pairs, the system suggests before-and-after pairs from location, visual similarity,
+
+20
+00:01:21,947 --> 00:01:22,989
+and time order.
+
+21
+00:01:22,989 --> 00:01:24,586
+It never auto-confirms.
+
+22
+00:01:24,586 --> 00:01:25,767
+A person decides.
+
+23
+00:01:25,767 --> 00:01:27,919
+Here's the Vyttila wiring pair.
+
+24
+00:01:27,919 --> 00:01:31,114
+Drag the slider to see the visible difference.
+
+25
+00:01:31,714 --> 00:01:36,468
+Here's the score breakdown, and the exact Cloudinary URLs behind the slider.
+
+26
+00:01:36,468 --> 00:01:41,410
+The campaign card is a shareable image built entirely from Cloudinary overlays.
+
+27
+00:01:43,013 --> 00:01:44,206
+The Impact report.
+
+28
+00:01:44,206 --> 00:01:46,990
+The counts come from the data, not the AI.
+
+29
+00:01:46,990 --> 00:01:53,087
+The summary is written only from stored facts, and every image it cites is checked to exist.
+
+30
+00:01:53,087 --> 00:01:54,943
+This green check shows that.
+
+31
+00:01:54,943 --> 00:01:59,981
+Here's the timeline, the evidence table, and one click downloads the report.
+
+32
+00:02:03,346 --> 00:02:05,615
+Finally, Trace, on a gutter image.
+
+33
+00:02:05,615 --> 00:02:07,216
+The Cloudinary original.
+
+34
+00:02:07,216 --> 00:02:11,354
+The capture date, location, and where that metadata came from.
+
+35
+00:02:11,354 --> 00:02:13,890
+The full AI output and the model used.
+
+36
+00:02:13,890 --> 00:02:19,162
+And the transformation chain: every Cloudinary URL the app delivered is logged.
+
+37
+00:02:20,364 --> 00:02:26,259
+Ground Truth flags near-duplicates and missing location or date, blurs faces on delivery,
+
+38
+00:02:26,259 --> 00:02:28,445
+and never claims verified impact.
+
+39
+00:02:28,445 --> 00:02:32,485
+It only shows the visible difference between confirmed pairs.
+
+40
+00:02:32,485 --> 00:02:37,519
+In this demo, the after images are AI-edited and the sites are illustrative,
+
+41
+00:02:37,519 --> 00:02:38,844
+and the app says so.

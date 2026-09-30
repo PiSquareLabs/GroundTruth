@@ -2,7 +2,7 @@
 
 **AI-organized before/after field evidence and traceable impact reports for NGOs, built on Cloudinary.**
 
-**Live Demo:** [https://ground-truth-cloudinary-n3i564mqhcg87ltuqrqprw.streamlit.app](https://ground-truth-cloudinary-n3i564mqhcg87ltuqrqprw.streamlit.app) · **Demo video:** _coming soon_
+**Live Demo:** [https://ground-truth-cloudinary-n3i564mqhcg87ltuqrqprw.streamlit.app](https://ground-truth-cloudinary-n3i564mqhcg87ltuqrqprw.streamlit.app) · **Demo video:** [docs/demo/ground-truth-demo.mp4](docs/demo/ground-truth-demo.mp4) ([script](docs/demo/DEMO_SCRIPT.md))
 
 > 🧪 **About the demo dataset.** The **before** photos are real photos; the **after** images are **AI-generated or edited**
 > illustrations of the intended repair. Locations (Kochi, Kerala) and dates are **fictional**, assigned for the demo.
