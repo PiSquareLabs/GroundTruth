@@ -1,75 +1,186 @@
-"""Projects and asset grid with filters."""
+"""Evidence library: browse, filter and search photos by meaning."""
 from datetime import date
 
 import streamlit as st
 
-from gt import db, media, trust
-from gt.ui import AI_BADGE, page_setup
+from gt import ai_provider, config, db, media, search, trust
+from gt.ui import AI_BADGE, next_step, page_header, page_setup, provenance_badge, synthetic_badge
 
-page_setup("Assets", "🗂️")
-st.title("🗂️ Evidence library")
+page_setup("Evidence library", ":material/photo_library:")
+page_header("Step 2 of 4 · Explore", "Evidence library",
+            "Every photo, grouped by project. Search by describing what you want to find.",
+            ["Type what you are looking for, like “open drain”. Photos are matched by meaning, not just exact words.",
+             "Use Filters to narrow by project or photo type.",
+             "Open a photo for details, or Trace to see where it came from."])
+
+EXAMPLES = ["open drain next to a road", "exposed electrical wires", "rusted metal cover", "finished repair"]
+
+
+@st.cache_data(show_spinner=False, ttl=3600)
+def embed_query(q: str) -> list[float]:
+    return ai_provider.embed([q], task="RETRIEVAL_QUERY")[0]
+
 
 assets = db.assets()
 if not assets:
     st.warning("No images loaded yet.")
     st.stop()
 
-
-projects = {p["id"]: p["name"] for p in db.projects()}
-activities = sorted({a["activity_type"] for a in assets if a.get("activity_type")})
+projects = {p["id"]: p for p in db.projects()}
 dates = [date.fromisoformat(a["captured_at"][:10]) for a in assets if a.get("captured_at")]
 
-f1, f2, f3 = st.columns([1, 1, 1.2])
-sel_projects = f1.multiselect("Project", list(projects), format_func=projects.get)
-sel_acts = f2.multiselect("Activity (AI-suggested)", activities)
-date_range = f3.date_input("Captured between", value=(min(dates), max(dates))) if dates else None
-o1, o2, o3 = st.columns(3)
-include_undated = o1.checkbox("Include images without a capture date", value=True)
-only_flagged = o2.checkbox("Only images with flags")
-blur = o3.checkbox("Blur faces where people may appear", value=True,
-                   help="Uses Cloudinary's e_blur_faces transformation on delivery; the original is not modified.")
+# A project chosen on Home arrives as lib_projects; turn it into the per-project checkbox state.
+if "lib_projects" in st.session_state:
+    chosen = st.session_state.pop("lib_projects")
+    for pid in projects:
+        st.session_state[f"lib_p_{pid}"] = pid in chosen
+st.session_state.setdefault("lib_query", "")
+st.session_state.setdefault("lib_role", "All")
+st.session_state.setdefault("lib_undated", True)
+st.session_state.setdefault("lib_flagged", False)
+st.session_state.setdefault("blur_faces", True)
+
+
+def clear_filters() -> None:
+    st.session_state.lib_query = ""
+    st.session_state.lib_role = "All"
+    st.session_state.lib_undated = True
+    st.session_state.lib_flagged = False
+    for pid in projects:
+        st.session_state[f"lib_p_{pid}"] = False
+
+
+def pick_example() -> None:
+    if st.session_state.get("lib_example"):
+        st.session_state.lib_query = st.session_state.lib_example
+
+
+sel_projects = [pid for pid in projects if st.session_state.get(f"lib_p_{pid}")]
+n_filters = (len(sel_projects) + (st.session_state.lib_role != "All") + (not st.session_state.lib_undated)
+             + st.session_state.lib_flagged)
+
+top_l, top_r = st.columns([5, 1], vertical_alignment="bottom")
+query = top_l.text_input("Search by describing a photo", key="lib_query", icon=":material/search:",
+                         placeholder="e.g. open drain next to a road").strip()
+with top_r.popover(f"Filters ({n_filters})" if n_filters else "Filters", icon=":material/tune:", width="stretch"):
+    st.markdown("**Project**")
+    for pid, p in projects.items():
+        st.checkbox(p["name"], key=f"lib_p_{pid}")
+    st.pills("Photo type", ["All", "Before", "After"], key="lib_role", required=True)
+    st.checkbox("Include images without a capture date", key="lib_undated")
+    st.checkbox("Only images with flags", key="lib_flagged")
+    st.checkbox("Blur faces where people may appear", key="blur_faces",
+                help="Uses Cloudinary's e_blur_faces transformation on delivery; the original is not modified.")
+
+st.pills("Try searching for", EXAMPLES, key="lib_example", on_change=pick_example, label_visibility="collapsed")
+blur = st.session_state.blur_faces
 
 
 def keep(a: dict) -> bool:
     if sel_projects and a["project_id"] not in sel_projects:
         return False
-    if sel_acts and a.get("activity_type") not in sel_acts:
+    if st.session_state.lib_role != "All" and (a.get("role") or "").lower() != st.session_state.lib_role.lower():
         return False
-    if a.get("captured_at"):
-        if isinstance(date_range, tuple) and len(date_range) == 2:
-            d = date.fromisoformat(a["captured_at"][:10])
-            if not (date_range[0] <= d <= date_range[1]):
-                return False
-    elif not include_undated:
+    if not a.get("captured_at") and not st.session_state.lib_undated:
         return False
-    if only_flagged and not trust.metadata_flags(a):
+    if st.session_state.lib_flagged and not trust.metadata_flags(a):
         return False
     return True
 
 
-shown = [a for a in assets if keep(a)]
-st.caption(f"Showing {len(shown)} of {len(assets)} images")
+pool = [a for a in assets if keep(a)]
+hits, mode = [], None
+if query:
+    mode = "keyword"
+    if config.ai_ready():
+        try:
+            hits = search.semantic_search(embed_query(query), query, pool)
+            mode = "semantic"
+        except Exception as e:
+            st.warning(f"Semantic search unavailable ({type(e).__name__}); using keyword/tag search instead.")
+    if mode == "keyword":
+        if not config.ai_ready():
+            st.warning("No AI key is configured for this deployment, so search uses **keyword/tag matching** over the "
+                       "stored AI captions, tags and signals, not semantic embeddings.")
+        hits = search.keyword_search(query, pool)
 
-dupes = trust.find_duplicates(assets)
-if dupes:
-    with st.expander(f"⚠️ {len(dupes)} possible near-duplicate pair(s)"):
-        for x, y, s, how in dupes:
-            st.write(f"`{x}` ↔ `{y}` — {how} similarity {s:.3f}")
+cap_l, cap_r = st.columns([5, 1], vertical_alignment="center")
+if query:
+    cap_l.caption(f"{len(hits)} results for “{query}” · matched by {'meaning' if mode == 'semantic' else 'keyword match'}")
+else:
+    cap_l.caption(f"Showing {len(pool)} of {len(assets)} images")
+if query or n_filters:
+    cap_r.button("Clear filters", type="tertiary", icon=":material/filter_alt_off:", on_click=clear_filters)
 
-for pid in [p for p in projects if any(a["project_id"] == p for a in shown)]:
-    group = [a for a in shown if a["project_id"] == pid]
-    st.subheader(f"{projects[pid]} · {len(group)}")
+
+@st.dialog("Photo details", width="large")
+def details(a: dict) -> None:
+    st.image(media.url_for(a, "display", blur_faces=blur and bool(a.get("people_present"))), width="stretch")
+    synthetic_badge(a)
+    st.markdown(f"**{(a.get('role') or '').title() + ' · ' if a.get('role') else ''}"
+                f"{(a.get('activity_type') or 'unclassified').replace('_', ' ')}** · "
+                f"{(a.get('captured_at') or 'no date')[:10]} · {a.get('project_name')}")
+    st.markdown(f":violet-badge[{AI_BADGE}] {a.get('caption') or '—'}")
+    if a.get("tags"):
+        st.caption("Tags: " + ", ".join(a["tags"]))
+    for flag in trust.metadata_flags(a):
+        st.caption(f":material/warning: {flag}")
+    pair = next((p for p in db.pairs() if a["id"] in (p["before_id"], p["after_id"])), None)
+    c1, c2 = st.columns(2)
+    if c1.button("Open full trace", type="primary", width="stretch"):
+        st.switch_page("views/5_Trace.py", query_params={"asset": a["id"]})
+    if pair and c2.button("View confirmed pair" if pair["status"] == "confirmed" else "Review its pair", width="stretch"):
+        st.session_state.pairs_view = pair["status"]
+        st.switch_page("views/3_Pairs.py")
+
+
+def card(a: dict, hit: dict | None = None) -> None:
+    with st.container(border=True):
+        st.image(media.url_for(a, "thumb", blur_faces=blur and bool(a.get("people_present"))), width="stretch")
+        badges = " ".join(b for b in (provenance_badge(a), f":gray-badge[match {hit['score']:.2f}]" if hit else "") if b)
+        if badges:
+            st.markdown(badges)
+        role = (a.get("role") or "").title()
+        activity = (a.get("activity_type") or "unclassified").replace("_", " ")
+        st.markdown(f"**{role + ' · ' if role else ''}{activity}** · {(a.get('captured_at') or 'no date')[:10]}")
+        if a.get("caption"):
+            st.markdown(f":violet-badge[{AI_BADGE}]")
+            st.caption(a["caption"])
+        if hit:
+            st.caption(f":material/explore: **Why it matched:** {hit['why']}")
+        for flag in trust.metadata_flags(a):
+            st.caption(f":material/warning: {flag}")
+        d, t = st.columns(2)
+        if d.button("Details", key=f"det_{a['id']}", width="stretch"):
+            details(a)
+        if t.button("Trace", key=f"tr_{a['id']}", width="stretch"):
+            st.switch_page("views/5_Trace.py", query_params={"asset": a["id"]})
+
+
+if query:
+    if not hits:
+        st.info("No photos matched. Try different words, or clear the filters.")
     cols = st.columns(4)
-    for i, a in enumerate(group):
+    for i, h in enumerate(hits):
         with cols[i % 4]:
-            with st.container(border=True):
-                st.image(media.url_for(a, "thumb", blur_faces=blur and bool(a.get("people_present"))), width="stretch")
-                st.markdown(f"**{(a.get('activity_type') or 'unclassified').replace('_', ' ')}** · "
-                            f"{(a.get('captured_at') or 'no date')[:10]}")
-                if a.get("caption"):
-                    st.caption(f"{AI_BADGE}: {a['caption']}")
-                if a.get("signals"):
-                    st.caption("Signals: " + ", ".join(a["signals"]))
-                for flag in trust.metadata_flags(a):
-                    st.caption(f"⚠️ {flag}")
-                st.page_link("views/5_Trace.py", label="Trace", icon="🧾", query_params={"asset": a["id"]})
+            card(h["asset"], h)
+else:
+    dupes = trust.find_duplicates(assets)
+    if dupes:
+        with st.expander(f":material/warning: {len(dupes)} possible near-duplicate pair(s)"):
+            for x, y, s, how in dupes:
+                st.write(f"`{x}` ↔ `{y}` — {how} similarity {s:.3f}")
+    if not pool:
+        st.info("No photos match these filters.")
+    for pid, p in projects.items():
+        group = [a for a in pool if a["project_id"] == pid]
+        if not group:
+            continue
+        st.subheader(p["name"])
+        st.caption(f"{p.get('location_name') or 'location not set'} · {len(group)} images")
+        cols = st.columns(4)
+        for i, a in enumerate(group):
+            with cols[i % 4]:
+                card(a)
+
+next_step("Review before/after pairs", "Confirm which photos show the same spot.", "Review pairs", "views/3_Pairs.py")
